@@ -1,4 +1,6 @@
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Objects;
 
 public class Course {
 
@@ -7,11 +9,24 @@ public class Course {
 	private String instructor;
 	private int units;
 	private ClassTime classTime;
-	private Date[] examTime;
+	private LocalDate[] examTime;
 	private int capacity;
 	private String[] prerequisites;
 
-	public Course(int code, String name, String instructor, int units, ClassTime classTime, Date[] examTime,
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Course course = (Course) o;
+		return code == course.code;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(code);
+	}
+
+	public Course(int code, String name, String instructor, int units, ClassTime classTime, LocalDate[] examTime,
 	              int capacity, String[] prerequisites) {
 		this.code = code;
 		this.name = name;
