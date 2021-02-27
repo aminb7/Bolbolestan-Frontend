@@ -37,4 +37,24 @@ public class Course {
 		this.capacity = capacity;
 		this.prerequisites = prerequisites;
 	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public String getInstructor() {
+		return this.instructor;
+	}
+
+	public int getUnits() {
+		return this.units;
+	}
+
+	public int getCapacity() {
+		return this.capacity;
+	}
 }
