@@ -180,8 +180,8 @@ public class Bolbolestan {
 		ObjectNode answerData = objectMapper.createObjectNode();
 		ArrayNode weeklySchedule = objectMapper.createArrayNode();
 
-		Map<Integer, SelectedCourse> cources = student.getCourses();
-		List<SelectedCourse> coursesList = Arrays.asList(this.courses.values().toArray(new Course[0]));
+		Map<Integer, SelectedCourse> courses = student.getCourses();
+		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
 		for (SelectedCourse selectedCource : coursesList) {
 			ObjectNode courseData = objectMapper.createObjectNode();
 			courseData.put("code", selectedCource.getCourse().getCode());
