@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiException extends Exception {
-	private List<String> messages;
+	private final List<String> messages;
 
 	public MultiException() {
 		this.messages = new ArrayList<>();

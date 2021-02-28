@@ -8,14 +8,14 @@ import java.util.Objects;
 
 public class Course {
 
-	private int code;
-	private String name;
-	private String instructor;
-	private int units;
-	private ClassTime classTime;
-	private ExamTime examTime;
-	private int capacity;
-	private String[] prerequisites;
+	private final int code;
+	private final String name;
+	private final String instructor;
+	private final int units;
+	private final ClassTime classTime;
+	private final ExamTime examTime;
+	private final int capacity;
+	private final String[] prerequisites;
 	private int numberOfStudents;
 
 	@Override

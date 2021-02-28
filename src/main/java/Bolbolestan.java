@@ -13,9 +13,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Bolbolestan {
-	private Map<Integer, Course> courses;
-	private Map<Integer, Student> students;
-	private ObjectMapper objectMapper;
+	private final Map<Integer, Course> courses;
+	private final Map<Integer, Student> students;
+	private final ObjectMapper objectMapper;
 
 	public Bolbolestan() {
 		this.courses = new HashMap<>();
@@ -147,7 +147,7 @@ public class Bolbolestan {
 		ArrayNode weeklySchedule = this.objectMapper.createArrayNode();
 
 		Map<Integer, SelectedCourse> courses = student.getCourses();
-		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
+		SelectedCourse[] coursesList = courses.values().toArray(new SelectedCourse[0]);
 
 		for (SelectedCourse selectedCourse : coursesList) {
 			ObjectNode courseData = selectedCourse.getCourse().getJsonFullInfo();

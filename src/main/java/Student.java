@@ -6,10 +6,10 @@ import java.util.Map;
 
 public class Student {
 
-	private int studentId;
-	private String name;
-	private Year enteredAt;
-	private Map<Integer, SelectedCourse> courses;
+	private final int studentId;
+	private final String name;
+	private final Year enteredAt;
+	private final Map<Integer, SelectedCourse> courses;
 
 	public Student(int studentId, String name, Year enteredAt) {
 		this.studentId = studentId;
@@ -31,7 +31,7 @@ public class Student {
 	}
 
 	public int getSelectedUnits() {
-		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
+		SelectedCourse[] coursesList = courses.values().toArray(new SelectedCourse[0]);
 
 		int selectedUnits = 0;
 		for (SelectedCourse course : coursesList) {

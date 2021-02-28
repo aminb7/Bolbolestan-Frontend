@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.LocalDateTime;
 
 public class ExamTime implements EventTime {
-	private LocalDateTime start;
-	private LocalDateTime end;
+	private final LocalDateTime start;
+	private final LocalDateTime end;
 
 	public ExamTime(LocalDateTime start, LocalDateTime end) {
 		this.start = start;
@@ -19,10 +19,7 @@ public class ExamTime implements EventTime {
 			return false;
 
 		ExamTime other = (ExamTime) otherEventTime;
-		if (this.start.isBefore(other.end) && this.end.isAfter(other.start))
-			return true;
-
-		return false;
+		return this.start.isBefore(other.end) && this.end.isAfter(other.start);
 	}
 
 	@Override
