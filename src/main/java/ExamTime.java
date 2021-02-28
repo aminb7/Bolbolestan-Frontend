@@ -1,10 +1,14 @@
-import java.time.LocalDate;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.time.LocalDateTime;
 
 public class ExamTime implements EventTime {
-	private LocalDate start;
-	private LocalDate end;
+	private LocalDateTime start;
+	private LocalDateTime end;
 
-	public ExamTime(LocalDate start, LocalDate end) {
+	public ExamTime(LocalDateTime start, LocalDateTime end) {
 		this.start = start;
 		this.end = end;
 	}
@@ -19,5 +23,13 @@ public class ExamTime implements EventTime {
 			return true;
 
 		return false;
+	}
+
+	@Override
+	public ObjectNode getJsonInfo() {
+		ObjectNode result = new ObjectMapper().createObjectNode();
+		result.put("start", this.start.toString());
+		result.put("end", this.start.toString());
+		return result;
 	}
 }

@@ -10,6 +10,9 @@ public class Main {
 		Bolbolestan bolbolestan = new Bolbolestan();
 		while (true) {
 			String line = scanner.nextLine();
+			if (line.isEmpty())
+				continue;
+
 			String[] splitLine = line.split(" ", 2);
 			String command = splitLine[0];
 			String data = splitLine[1];

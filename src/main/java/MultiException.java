@@ -1,10 +1,15 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MultiException extends Exception {
 	private List<String> messages;
+
+	public MultiException() {
+		this.messages = new ArrayList<>();
+	}
 
 	@Override
 	public String getMessage() {

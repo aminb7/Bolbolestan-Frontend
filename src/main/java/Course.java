@@ -1,3 +1,7 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
@@ -76,5 +80,28 @@ public class Course {
 
 	public void incrementNumOfStudents() {
 		this.numberOfStudents = this.numberOfStudents + 1;
+	}
+
+	public ObjectNode getJsonSummary() {
+		ObjectNode result = new ObjectMapper().createObjectNode();
+		result.put("code", code);
+		result.put("name", name);
+		result.put("Instructor", instructor);
+		return result;
+	}
+
+	public ObjectNode getJsonFullInfo() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode result = objectMapper.createObjectNode();
+		result.put("code", this.code);
+		result.put("name", this.name);
+		result.put("Instructor", this.instructor);
+		result.put("units", this.units);
+		result.set("classTime", this.classTime.getJsonInfo());
+		result.set("examTime", this.examTime.getJsonInfo());
+		result.put("capacity", this.capacity);
+		ArrayNode prerequisites = objectMapper.valueToTree(this.prerequisites);
+		result.set("prerequisites", prerequisites);
+		return result;
 	}
 }

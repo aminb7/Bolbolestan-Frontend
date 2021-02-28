@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -65,19 +68,20 @@ public class Bolbolestan {
 		int units = jsonInput.get("units").asInt();
 		ClassTime classTime = new ClassTime(days, classTimeNode.get("time").asText());
 		ExamTime examTime = new ExamTime(
-				LocalDate.parse(examTimeNode.get("start").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
-				LocalDate.parse(examTimeNode.get("end").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
+				LocalDateTime.parse(examTimeNode.get("start").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+				LocalDateTime.parse(examTimeNode.get("end").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
 
 		int capacity = jsonInput.get("capacity").asInt();
 		String[] prerequisites = this.objectMapper.convertValue(jsonInput.withArray("prerequisites"), String[].class);
-
 		this.courses.put(code, new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
 
 		return this.objectMapper.createObjectNode();
 	}
 
 	private ObjectNode addStudent(JsonNode jsonInput) {
-		Student newStudent = new Student(jsonInput.get("studentId").asInt(), jsonInput.get("name").asText(), Year.of(jsonInput.get("enteredAt").asInt()));
+		Student newStudent = new Student(jsonInput.get("studentId").asInt(), jsonInput.get("name").asText(),
+				Year.of(jsonInput.get("enteredAt").asInt()));
+
 		this.students.put(jsonInput.get("studentId").asInt(), newStudent);
 
 		return this.objectMapper.createObjectNode();
@@ -88,18 +92,11 @@ public class Bolbolestan {
 			throw new Exception("StudentNotFound");
 
 		ArrayNode answerData = this.objectMapper.createArrayNode();
-//		Shayad bayad mostaghim az Course, ObjectNode sakht (ba objectMapper)
 		List<Course> coursesList = Arrays.asList(courses.values().toArray(new Course[0]));
 		coursesList.sort(Comparator.comparing(Course::getName));
 
-		for (Course course : coursesList) {
-			ObjectNode courseData = this.objectMapper.createObjectNode();
-			courseData.put("code", course.getCode());
-			courseData.put("name", course.getName());
-			courseData.put("Instructor", course.getInstructor());
-
-			answerData.add(courseData);
-		}
+		for (Course course : coursesList)
+			answerData.add(course.getJsonSummary());
 
 		return answerData;
 	}
@@ -112,20 +109,11 @@ public class Bolbolestan {
 		if (course == null)
 			throw new Exception("OfferingNotFound");
 
-//		todo Shayad bayad mostaghim az Course, ObjectNode sakht (ba objectMapper)
-		ObjectNode answerData = this.objectMapper.createObjectNode();
-		answerData.put("code", course.getCode());
-		answerData.put("name", course.getName());
-		answerData.put("Instructor", course.getInstructor());
-		answerData.put("units", course.getUnits());
-//		answerData.put("classTime", course.getUnits());
-//		answerData.put("examTime", course.getUnits());
-		answerData.put("capacity", course.getCapacity());
-		return answerData;
+		return course.getJsonFullInfo();
 	}
 
 	private ObjectNode addToWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = students.get(jsonInput.get("code").asInt());
+		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
 			throw new Exception("StudentNotFound");
 
@@ -138,7 +126,7 @@ public class Bolbolestan {
 	}
 
 	private ObjectNode removeFromWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = students.get(jsonInput.get("code").asInt());
+		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
 			throw new Exception("StudentNotFound");
 
@@ -151,7 +139,7 @@ public class Bolbolestan {
 	}
 
 	private ObjectNode getWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = students.get(jsonInput.get("code").asInt());
+		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
 			throw new Exception("StudentNotFound");
 
@@ -162,12 +150,8 @@ public class Bolbolestan {
 		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
 
 		for (SelectedCourse selectedCourse : coursesList) {
-			ObjectNode courseData = this.objectMapper.createObjectNode();
-			courseData.put("code", selectedCourse.getCourse().getCode());
-			courseData.put("name", selectedCourse.getCourse().getName());
-//			answerData.put("classTime", course.getUnits());
-//			answerData.put("examTime", course.getUnits());
-			// state
+			ObjectNode courseData = selectedCourse.getCourse().getJsonFullInfo();
+			courseData.put("status", selectedCourse.getState().toString());
 
 			weeklySchedule.add(courseData);
 		}
@@ -215,7 +199,7 @@ public class Bolbolestan {
 	}
 
 	private ObjectNode finalize(JsonNode json) throws Exception {
-		Student student = students.get(json.get("code").asInt());
+		Student student = students.get(json.get("StudentId").asInt());
 		if (student == null)
 			throw new Exception("StudentNotFound");
 

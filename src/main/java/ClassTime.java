@@ -1,3 +1,7 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -30,5 +34,15 @@ public class ClassTime implements EventTime {
 			return true;
 
 		return false;
+	}
+
+	@Override
+	public ObjectNode getJsonInfo() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode result = objectMapper.createObjectNode();
+		ArrayNode days = objectMapper.valueToTree(this.days);
+		result.set("days", days);
+		result.put("time", this.start.toString() + "-" + this.end.toString());
+		return result;
 	}
 }
