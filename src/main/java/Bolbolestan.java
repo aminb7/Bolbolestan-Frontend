@@ -12,82 +12,88 @@ import java.util.*;
 public class Bolbolestan {
 	private Map<Integer, Course> courses;
 	private Map<Integer, Student> students;
+	private ObjectMapper objectMapper;
 
 	public Bolbolestan() {
 		this.courses = new HashMap<>();
 		this.students = new HashMap<>();
+		this.objectMapper = new ObjectMapper();
 	}
 
-	public void execute(String command, JsonNode data, ObjectMapper objectMapper) {
-		// Call Command Handler.
-		JsonNode jsonAnswer = switch (command) {
-			case "addOffering" -> this.addOffering(data, objectMapper);
-			case "addStudent" -> this.addStudent(data, objectMapper);
-			case "getOfferings" -> this.getOfferings(data, objectMapper);
-			case "getOffering" -> this.getOffering(data, objectMapper);
-			case "addToWeeklySchedule" -> this.addToWeeklySchedule(data, objectMapper);
-			case "removeFromWeeklySchedule" -> this.removeFromWeeklySchedule(data, objectMapper);
-			case "getWeeklySchedule" -> this.getWeeklySchedule(data, objectMapper);
-			case "finalize" -> this.finalize(data, objectMapper);
-			default -> objectMapper.createObjectNode();
-		};
+	public void execute(String command, String data) {
+		ObjectNode message = this.objectMapper.createObjectNode();
 
-		// Print Output.
 		try {
-			System.out.println(objectMapper.writeValueAsString(jsonAnswer));
+			message.put("success", true);
+			JsonNode jsonData = objectMapper.readTree(data);
+
+			// Call the command handler.
+			JsonNode jsonAnswer = switch (command) {
+				case "addOffering" -> this.addOffering(jsonData);
+				case "addStudent" -> this.addStudent(jsonData);
+				case "getOfferings" -> this.getOfferings(jsonData);
+				case "getOffering" -> this.getOffering(jsonData);
+				case "addToWeeklySchedule" -> this.addToWeeklySchedule(jsonData);
+				case "removeFromWeeklySchedule" -> this.removeFromWeeklySchedule(jsonData);
+				case "getWeeklySchedule" -> this.getWeeklySchedule(jsonData);
+				case "finalize" -> this.finalize(jsonData);
+				default -> this.objectMapper.createObjectNode();
+			};
+
+			message.set("data", jsonAnswer);
 		}
-		catch (JsonProcessingException e) {
+		catch (Exception error) {
+			message.put("success", false);
+			message.put("error", error.getMessage());
+		}
+
+		try {
+			System.out.println(this.objectMapper.writeValueAsString(message));
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-
 	}
 
-	private ObjectNode addOffering(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
-		answer.put("success", true);
-		answer.set("data", objectMapper.createObjectNode());
+	private ObjectNode addOffering(JsonNode jsonInput) {
+		JsonNode classTimeNode = jsonInput.with("classTime");
+		String[] days = this.objectMapper.convertValue(classTimeNode.withArray("days"), String[].class);
+		JsonNode examTimeNode = jsonInput.get("examTime");
 
-		JsonNode classTimeNode = json.with("classTime");
-		String[] days = objectMapper.convertValue(classTimeNode.withArray("days"), String[].class);
-		JsonNode examTimeNode = json.get("examTime");
-
-		int code = json.get("code").asInt();
-		String name = json.get("name").asText();
-		String instructor = json.get("Instructor").asText();
-		int units = json.get("units").asInt();
+		int code = jsonInput.get("code").asInt();
+		String name = jsonInput.get("name").asText();
+		String instructor = jsonInput.get("Instructor").asText();
+		int units = jsonInput.get("units").asInt();
 		ClassTime classTime = new ClassTime(days, classTimeNode.get("time").asText());
-		LocalDate[] examTime = {LocalDate.parse(examTimeNode.get("start").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
-				LocalDate.parse(examTimeNode.get("end").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss"))};
-		int capacity = json.get("capacity").asInt();
-		String[] prerequisites = objectMapper.convertValue(json.withArray("prerequisites"), String[].class);
+		ExamTime examTime = new ExamTime(
+				LocalDate.parse(examTimeNode.get("start").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+				LocalDate.parse(examTimeNode.get("end").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
+
+		int capacity = jsonInput.get("capacity").asInt();
+		String[] prerequisites = this.objectMapper.convertValue(jsonInput.withArray("prerequisites"), String[].class);
 
 		this.courses.put(code, new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
 
-		return answer;
+		return this.objectMapper.createObjectNode();
 	}
 
-	private ObjectNode addStudent(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
-		answer.put("success", true);
-		answer.set("data", objectMapper.createObjectNode());
+	private ObjectNode addStudent(JsonNode jsonInput) {
+		Student newStudent = new Student(jsonInput.get("studentId").asInt(), jsonInput.get("name").asText(), Year.of(jsonInput.get("enteredAt").asInt()));
+		this.students.put(jsonInput.get("studentId").asInt(), newStudent);
 
-		System.out.println("adding student");
-		Student newStudent = new Student(json.get("studentId").asInt(), json.get("name").asText(), Year.of(json.get("enteredAt").asInt()));
-		this.students.put(json.get("studentId").asInt(), newStudent);
-
-		return answer;
+		return this.objectMapper.createObjectNode();
 	}
 
-	private ObjectNode getOfferings(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
-		answer.put("success", true);
-		ArrayNode answerData = objectMapper.createArrayNode();
+	private ArrayNode getOfferings(JsonNode jsonInput) throws Exception {
+		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
+			throw new Exception("StudentNotFound");
 
+		ArrayNode answerData = this.objectMapper.createArrayNode();
 //		Shayad bayad mostaghim az Course, ObjectNode sakht (ba objectMapper)
 		List<Course> coursesList = Arrays.asList(courses.values().toArray(new Course[0]));
 		coursesList.sort(Comparator.comparing(Course::getName));
+
 		for (Course course : coursesList) {
-			ObjectNode courseData = objectMapper.createObjectNode();
+			ObjectNode courseData = this.objectMapper.createObjectNode();
 			courseData.put("code", course.getCode());
 			courseData.put("name", course.getName());
 			courseData.put("Instructor", course.getInstructor());
@@ -95,97 +101,70 @@ public class Bolbolestan {
 			answerData.add(courseData);
 		}
 
-		answer.set("data", answerData);
-		return answer;
+		return answerData;
 	}
 
-	private ObjectNode getOffering(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
+	private ObjectNode getOffering(JsonNode jsonInput) throws Exception {
+		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
+			throw new Exception("StudentNotFound");
 
-//		Shayad bayad mostaghim az Course, ObjectNode sakht (ba objectMapper)
-		Course course = courses.get(json.get("code").asInt());
-		if (course != null) {
-			answer.put("success", true);
-			ObjectNode answerData = objectMapper.createObjectNode();
-			answerData.put("code", course.getCode());
-			answerData.put("name", course.getName());
-			answerData.put("Instructor", course.getInstructor());
-			answerData.put("units", course.getUnits());
-//				answerData.put("classTime", course.getUnits());
-//				answerData.put("examTime", course.getUnits());
-			answerData.put("capacity", course.getCapacity());
+		Course course = courses.get(jsonInput.get("code").asInt());
+		if (course == null)
+			throw new Exception("OfferingNotFound");
 
-			answer.set("data", answerData);
-			return answer;
-		}
-//		shayad OfferingNotFound bayad json bashe.
-		answer.put("success", false);
-		answer.put("error", "OfferingNotFound");
-		return answer;
+//		todo Shayad bayad mostaghim az Course, ObjectNode sakht (ba objectMapper)
+		ObjectNode answerData = this.objectMapper.createObjectNode();
+		answerData.put("code", course.getCode());
+		answerData.put("name", course.getName());
+		answerData.put("Instructor", course.getInstructor());
+		answerData.put("units", course.getUnits());
+//		answerData.put("classTime", course.getUnits());
+//		answerData.put("examTime", course.getUnits());
+		answerData.put("capacity", course.getCapacity());
+		return answerData;
 	}
 
-	private ObjectNode addToWeeklySchedule(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
-		Course course = courses.get(json.get("code").asInt());
-		if (course == null) {
-			answer.put("success", false);
-			answer.put("error", "OfferingNotFound");
-			return answer;
-		}
+	private ObjectNode addToWeeklySchedule(JsonNode jsonInput) throws Exception {
+		Student student = students.get(jsonInput.get("code").asInt());
+		if (student == null)
+			throw new Exception("StudentNotFound");
 
-		Student student = students.get(json.get("code").asInt());
-		if (student == null) {
-			answer.put("success", false);
-			answer.put("error", "StudentNotFound");
-			return answer;
-		}
+		Course course = courses.get(jsonInput.get("code").asInt());
+		if (course == null)
+			throw new Exception("OfferingNotFound");
 
 		student.addCourse(course);
-		answer.put("success", true);
-		answer.set("data", objectMapper.createObjectNode());
-		return answer;
+		return this.objectMapper.createObjectNode();
 	}
 
-	private ObjectNode removeFromWeeklySchedule(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
-		Course course = courses.get(json.get("code").asInt());
-		if (course == null) {
-			answer.put("success", false);
-			answer.put("error", "OfferingNotFound");
-			return answer;
-		}
+	private ObjectNode removeFromWeeklySchedule(JsonNode jsonInput) throws Exception {
+		Student student = students.get(jsonInput.get("code").asInt());
+		if (student == null)
+			throw new Exception("StudentNotFound");
 
-		Student student = students.get(json.get("code").asInt());
-		if (student == null) {
-			answer.put("success", false);
-			answer.put("error", "StudentNotFound");
-			return answer;
-		}
+		Course course = courses.get(jsonInput.get("code").asInt());
+		if (course == null)
+			throw new Exception("OfferingNotFound");
 
 		student.removeCourse(course);
-		answer.put("success", true);
-		answer.set("data", objectMapper.createObjectNode());
-		return answer;
+		return this.objectMapper.createObjectNode();
 	}
 
-	private ObjectNode getWeeklySchedule(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
+	private ObjectNode getWeeklySchedule(JsonNode jsonInput) throws Exception {
+		Student student = students.get(jsonInput.get("code").asInt());
+		if (student == null)
+			throw new Exception("StudentNotFound");
 
-		Student student = students.get(json.get("code").asInt());
-		if (student == null) {
-			answer.put("success", false);
-			answer.put("error", "StudentNotFound");
-			return answer;
-		}
-		ObjectNode answerData = objectMapper.createObjectNode();
-		ArrayNode weeklySchedule = objectMapper.createArrayNode();
+		ObjectNode answerData = this.objectMapper.createObjectNode();
+		ArrayNode weeklySchedule = this.objectMapper.createArrayNode();
 
 		Map<Integer, SelectedCourse> courses = student.getCourses();
 		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
-		for (SelectedCourse selectedCource : coursesList) {
-			ObjectNode courseData = objectMapper.createObjectNode();
-			courseData.put("code", selectedCource.getCourse().getCode());
-			courseData.put("name", selectedCource.getCourse().getName());
+
+		for (SelectedCourse selectedCourse : coursesList) {
+			ObjectNode courseData = this.objectMapper.createObjectNode();
+			courseData.put("code", selectedCourse.getCourse().getCode());
+			courseData.put("name", selectedCourse.getCourse().getName());
 //			answerData.put("classTime", course.getUnits());
 //			answerData.put("examTime", course.getUnits());
 			// state
@@ -194,66 +173,55 @@ public class Bolbolestan {
 		}
 
 		answerData.set("weeklySchedule", weeklySchedule);
-		answer.set("data", answerData);
-		return answer;
+		return answerData;
 	}
 
-	private List<Error> checkFinalizing(Student student) {
-		List<Error> errors = new ArrayList<>();
+	private void checkFinalizing(Student student) throws MultiException {
+		MultiException exception = new MultiException();
 
 		Map<Integer, SelectedCourse> courses = student.getCourses();
 		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
 
 		int selectedUnits = student.getSelectedUnits();
 		if (selectedUnits < 12)
-			errors.add(new Error(ErrorType.MinimumUnitsError));
+			exception.addMessage("MinimumUnitsError");
 
 		if (selectedUnits > 20)
-			errors.add(new Error(ErrorType.MaximumUnitsError));
+			exception.addMessage("MaximumUnitsError");
 
 		for (int i = 0; i < coursesList.size(); i++) {
 			if ((coursesList.get(i).getState() == CourseState.NON_FINALIZED) &&
 					(coursesList.get(i).getCourse().getNumberOfStudents() >= coursesList.get(i).getCourse().getCapacity()))
-				errors.add(new Error(ErrorType.CapacityError, coursesList.get(i).getCourse().getCode()));
+				exception.addMessage("CapacityError " + coursesList.get(i).getCourse().getCode());
 
 			// Checking Conflicts.
 			for (int j = 0; j < coursesList.size(); j++) {
 				if (i != j) {
 					// Check Class Time Conflict.
 					if (coursesList.get(i).getCourse().getClassTime().overlaps(coursesList.get(j).getCourse().getClassTime()))
-						errors.add(new Error(ErrorType.ClassTimeCollisionError, coursesList.get(i).getCourse().getCode(), coursesList.get(j).getCourse().getCode()));
+						exception.addMessage("ClassTimeCollisionError " + coursesList.get(i).getCourse().getCode()
+								+ " " + coursesList.get(j).getCourse().getCode());
 
 					// Check Exam Time Conflict.
-
+					if (coursesList.get(i).getCourse().getExamTime().overlaps(coursesList.get(j).getCourse().getExamTime()))
+						exception.addMessage("ExamTimeCollisionError " + coursesList.get(i).getCourse().getCode()
+								+ " " + coursesList.get(j).getCourse().getCode());
 				}
 			}
 		}
 
-		return errors;
+		if (exception.getHasError())
+			throw exception;
 	}
 
-	private ObjectNode finalize(JsonNode json, ObjectMapper objectMapper) {
-		ObjectNode answer = objectMapper.createObjectNode();
-
+	private ObjectNode finalize(JsonNode json) throws Exception {
 		Student student = students.get(json.get("code").asInt());
-		if (student == null) {
-			answer.put("success", false);
-			answer.put("error", "StudentNotFound");
-			return answer;
-		}
+		if (student == null)
+			throw new Exception("StudentNotFound");
 
-		List<Error> errors = checkFinalizing(student);
+		checkFinalizing(student);
+		student.finalizeCourses();
 
-		if (errors.size() == 0) {
-			student.finalizeCourses();
-			answer.put("success", true);
-			answer.set("data", objectMapper.createObjectNode());
-			return answer;
-		}
-
-		// Maybe all errors should be set in output.
-		answer.put("success", false);
-		answer.put("error", errors.get(0).errorMessage());
-		return answer;
+		return this.objectMapper.createObjectNode();
 	}
 }

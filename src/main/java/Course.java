@@ -9,7 +9,7 @@ public class Course {
 	private String instructor;
 	private int units;
 	private ClassTime classTime;
-	private LocalDate[] examTime;
+	private ExamTime examTime;
 	private int capacity;
 	private String[] prerequisites;
 	private int numberOfStudents;
@@ -27,7 +27,7 @@ public class Course {
 		return Objects.hash(code);
 	}
 
-	public Course(int code, String name, String instructor, int units, ClassTime classTime, LocalDate[] examTime,
+	public Course(int code, String name, String instructor, int units, ClassTime classTime, ExamTime examTime,
 	              int capacity, String[] prerequisites) {
 		this.code = code;
 		this.name = name;
@@ -66,7 +66,7 @@ public class Course {
 		return classTime;
 	}
 
-	public LocalDate[] getExamTime() {
+	public ExamTime getExamTime() {
 		return examTime;
 	}
 

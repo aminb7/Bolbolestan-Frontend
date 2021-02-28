@@ -1,9 +1,7 @@
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
 
-public class ClassTime {
+public class ClassTime implements EventTime {
 
 	private String[] days;
 	private LocalTime start;
@@ -16,8 +14,12 @@ public class ClassTime {
 		this.end = LocalTime.parse(times[1], DateTimeFormatter.ofPattern("HH[:mm]"));
 	}
 
-	public boolean overlaps(ClassTime other) {
+	@Override
+	public boolean overlaps(EventTime otherEventTime) {
+		if (getClass() != otherEventTime.getClass())
+			return false;
 
+		ClassTime other = (ClassTime) otherEventTime;
 		if (this.days[0].equals(other.days[0]) || this.days[this.days.length - 1].equals(other.days[0])
 				|| this.days[0].equals(other.days[other.days.length - 1])
 				|| this.days[this.days.length - 1].equals(other.days[other.days.length - 1])) {
