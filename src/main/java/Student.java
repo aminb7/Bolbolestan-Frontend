@@ -15,4 +15,12 @@ public class Student {
 		this.enteredAt = enteredAt;
 		this.courses = new HashMap<>();
 	}
+
+	public void addCourse(Course course) {
+		courses.put(course.getCode(), new SelectedCource(course, CourseState.NON_FINALIZED));
+	}
+
+	public void removeCourse(Course course) {
+		courses.remove(course.getCode());
+	}
 }

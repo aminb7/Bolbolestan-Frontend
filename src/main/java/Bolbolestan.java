@@ -45,7 +45,7 @@ public class Bolbolestan {
 	private ObjectNode addOffering(JsonNode json, ObjectMapper objectMapper) {
 		ObjectNode answer = objectMapper.createObjectNode();
 		answer.put("success", true);
-		answer.put("data", objectMapper.createObjectNode());
+		answer.set("data", objectMapper.createObjectNode());
 
 		JsonNode classTimeNode = json.with("classTime");
 		String[] days = objectMapper.convertValue(classTimeNode.withArray("days"), String[].class);
@@ -126,13 +126,45 @@ public class Bolbolestan {
 
 	private ObjectNode addToWeeklySchedule(JsonNode json, ObjectMapper objectMapper) {
 		ObjectNode answer = objectMapper.createObjectNode();
+		Course course = courses.get(json.get("code").asInt());
+		if (course == null) {
+			answer.put("success", false);
+			answer.put("error", "OfferingNotFound");
+			return answer;
+		}
 
+		Student student = students.get(json.get("code").asInt());
+		if (student == null) {
+			answer.put("success", false);
+			answer.put("error", "StudentNotFound");
+			return answer;
+		}
+
+		student.addCourse(course);
+		answer.put("success", true);
+		answer.set("data", objectMapper.createObjectNode());
 		return answer;
 	}
 
 	private ObjectNode removeFromWeeklySchedule(JsonNode json, ObjectMapper objectMapper) {
 		ObjectNode answer = objectMapper.createObjectNode();
+		Course course = courses.get(json.get("code").asInt());
+		if (course == null) {
+			answer.put("success", false);
+			answer.put("error", "OfferingNotFound");
+			return answer;
+		}
 
+		Student student = students.get(json.get("code").asInt());
+		if (student == null) {
+			answer.put("success", false);
+			answer.put("error", "StudentNotFound");
+			return answer;
+		}
+
+		student.removeCourse(course);
+		answer.put("success", true);
+		answer.set("data", objectMapper.createObjectNode());
 		return answer;
 	}
 
