@@ -10,12 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Bolbolestan {
-	private List<Course> courses;
-	private List<Student> students;
+	private Map<Integer, Course> courses;
+	private Map<Integer, Student> students;
 
 	public Bolbolestan() {
-		this.courses = new ArrayList<>();
-		this.students = new ArrayList<>();
+		this.courses = new HashMap<>();
+		this.students = new HashMap<>();
 	}
 
 	public void run(String command, JsonNode json, ObjectMapper objectMapper) {
@@ -62,7 +62,7 @@ public class Bolbolestan {
 		int capacity = json.get("capacity").asInt();
 		String[] prerequisites = objectMapper.convertValue(json.withArray("prerequisites"), String[].class);
 
-		this.courses.add(new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
+		this.courses.put(code, new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
 
 		return answer;
 	}
@@ -74,7 +74,7 @@ public class Bolbolestan {
 
 		System.out.println("adding student");
 		Student newStudent = new Student(json.get("studentId").asInt(), json.get("name").asText(), Year.of(json.get("enteredAt").asInt()));
-		this.students.add(newStudent);
+		this.students.put(json.get("studentId").asInt(), newStudent);
 
 		return answer;
 	}
@@ -85,8 +85,9 @@ public class Bolbolestan {
 		ArrayNode answerData = objectMapper.createArrayNode();
 
 //		Shayad bayad mostaghim az Course, ObjectNode sakht (ba objectMapper)
-		courses.sort(Comparator.comparing(Course::getName));
-		for (Course course : courses) {
+		List<Course> coursesList = Arrays.asList(courses.values().toArray(new Course[0]));
+		coursesList.sort(Comparator.comparing(Course::getName));
+		for (Course course : coursesList) {
 			ObjectNode courseData = objectMapper.createObjectNode();
 			courseData.put("code", course.getCode());
 			courseData.put("name", course.getName());
@@ -103,21 +104,20 @@ public class Bolbolestan {
 		ObjectNode answer = objectMapper.createObjectNode();
 
 //		Shayad bayad mostaghim az Course, ObjectNode sakht (ba objectMapper)
-		for (Course course : courses) {
-			if (course.getCode() == json.get("code").asInt()) {
-				answer.put("success", true);
-				ObjectNode answerData = objectMapper.createObjectNode();
-				answerData.put("code", course.getCode());
-				answerData.put("name", course.getName());
-				answerData.put("Instructor", course.getInstructor());
-				answerData.put("units", course.getUnits());
+		Course course = courses.get(json.get("code").asInt());
+		if (course != null) {
+			answer.put("success", true);
+			ObjectNode answerData = objectMapper.createObjectNode();
+			answerData.put("code", course.getCode());
+			answerData.put("name", course.getName());
+			answerData.put("Instructor", course.getInstructor());
+			answerData.put("units", course.getUnits());
 //				answerData.put("classTime", course.getUnits());
 //				answerData.put("examTime", course.getUnits());
-				answerData.put("capacity", course.getCapacity());
+			answerData.put("capacity", course.getCapacity());
 
-				answer.set("data", answerData);
-				return answer;
-			}
+			answer.set("data", answerData);
+			return answer;
 		}
 //		shayad OfferingNotFound bayad json bashe.
 		answer.put("success", false);

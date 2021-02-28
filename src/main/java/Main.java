@@ -13,7 +13,6 @@ public class Main {
 		Scanner scanner = new Scanner(System.in);
 		Bolbolestan bolbolestan = new Bolbolestan();
 		while (true) {
-			System.out.println("---- while loop ----");
 			String line = scanner.nextLine();
 			String[] splittedLine = line.split(" ", 2);
 			String command = splittedLine[0];
