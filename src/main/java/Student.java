@@ -7,7 +7,7 @@ public class Student {
 	private int studentId;
 	private String name;
 	private Year enteredAt;
-	private Map<Integer, SelectedCource> courses;
+	private Map<Integer, SelectedCourse> courses;
 
 	public Student(int studentId, String name, Year enteredAt) {
 		this.studentId = studentId;
@@ -17,10 +17,14 @@ public class Student {
 	}
 
 	public void addCourse(Course course) {
-		courses.put(course.getCode(), new SelectedCource(course, CourseState.NON_FINALIZED));
+		courses.put(course.getCode(), new SelectedCourse(course, CourseState.NON_FINALIZED));
 	}
 
 	public void removeCourse(Course course) {
 		courses.remove(course.getCode());
+	}
+
+	public Map<Integer, SelectedCourse> getCourses() {
+		return courses;
 	}
 }

@@ -171,13 +171,37 @@ public class Bolbolestan {
 	private ObjectNode getWeeklySchedule(JsonNode json, ObjectMapper objectMapper) {
 		ObjectNode answer = objectMapper.createObjectNode();
 
+		Student student = students.get(json.get("code").asInt());
+		if (student == null) {
+			answer.put("success", false);
+			answer.put("error", "StudentNotFound");
+			return answer;
+		}
+		ObjectNode answerData = objectMapper.createObjectNode();
+		ArrayNode weeklySchedule = objectMapper.createArrayNode();
+
+		Map<Integer, SelectedCourse> cources = student.getCourses();
+		List<SelectedCourse> coursesList = Arrays.asList(this.courses.values().toArray(new Course[0]));
+		for (SelectedCourse selectedCource : coursesList) {
+			ObjectNode courseData = objectMapper.createObjectNode();
+			courseData.put("code", selectedCource.getCourse().getCode());
+			courseData.put("name", selectedCource.getCourse().getName());
+//			answerData.put("classTime", course.getUnits());
+//			answerData.put("examTime", course.getUnits());
+			// state
+
+			weeklySchedule.add(courseData);
+		}
+
+		answerData.set("weeklySchedule", weeklySchedule);
+		answer.set("data", answerData);
 		return answer;
 	}
 
 	private ObjectNode finalize(JsonNode json, ObjectMapper objectMapper) {
 		ObjectNode answer = objectMapper.createObjectNode();
 		answer.put("success", true);
-		answer.put("data", objectMapper.createObjectNode());
+		answer.set("data", objectMapper.createObjectNode());
 		return answer;
 	}
 }
