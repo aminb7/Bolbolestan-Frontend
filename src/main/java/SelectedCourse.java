@@ -14,4 +14,6 @@ public class SelectedCourse {
 	public CourseState getState() {
 		return state;
 	}
+
+	public void setState(CourseState state) {this.state = state; }
 }

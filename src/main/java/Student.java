@@ -1,5 +1,7 @@
 import java.time.Year;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Student {
@@ -26,5 +28,22 @@ public class Student {
 
 	public Map<Integer, SelectedCourse> getCourses() {
 		return courses;
+	}
+
+	public int getSelectedUnits() {
+		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
+
+		int selectedUnits = 0;
+		for (SelectedCourse course : coursesList) {
+			selectedUnits = selectedUnits + course.getCourse().getUnits();
+		}
+
+		return selectedUnits;
+	}
+
+	public void finalizeCourses() {
+		for (Map.Entry<Integer, SelectedCourse> entry : courses.entrySet()){
+			entry.getValue().setState(CourseState.FINALIZED);
+		}
 	}
 }

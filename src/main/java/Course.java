@@ -12,6 +12,7 @@ public class Course {
 	private LocalDate[] examTime;
 	private int capacity;
 	private String[] prerequisites;
+	private int numberOfStudents;
 
 	@Override
 	public boolean equals(Object o) {
@@ -36,6 +37,7 @@ public class Course {
 		this.examTime = examTime;
 		this.capacity = capacity;
 		this.prerequisites = prerequisites;
+		this.numberOfStudents = 0;
 	}
 
 	public String getName() {
@@ -56,5 +58,23 @@ public class Course {
 
 	public int getCapacity() {
 		return this.capacity;
+	}
+
+	public int getNumberOfStudents() {return this.numberOfStudents; }
+
+	public ClassTime getClassTime() {
+		return classTime;
+	}
+
+	public LocalDate[] getExamTime() {
+		return examTime;
+	}
+
+	public String[] getPrerequisites() {
+		return prerequisites;
+	}
+
+	public void incrementNumOfStudents() {
+		this.numberOfStudents = this.numberOfStudents + 1;
 	}
 }

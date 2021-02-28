@@ -198,10 +198,62 @@ public class Bolbolestan {
 		return answer;
 	}
 
+	private List<Error> checkFinalizing(Student student) {
+		List<Error> errors = new ArrayList<>();
+
+		Map<Integer, SelectedCourse> courses = student.getCourses();
+		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
+
+		int selectedUnits = student.getSelectedUnits();
+		if (selectedUnits < 12)
+			errors.add(new Error(ErrorType.MinimumUnitsError));
+
+		if (selectedUnits > 20)
+			errors.add(new Error(ErrorType.MaximumUnitsError));
+
+		for (int i = 0; i < coursesList.size(); i++) {
+			if ((coursesList.get(i).getState() == CourseState.NON_FINALIZED) &&
+					(coursesList.get(i).getCourse().getNumberOfStudents() >= coursesList.get(i).getCourse().getCapacity()))
+				errors.add(new Error(ErrorType.CapacityError, coursesList.get(i).getCourse().getCode()));
+
+			// Checking Conflicts.
+			for (int j = 0; j < coursesList.size(); j++) {
+				if (i != j) {
+					// Check Class Time Conflict.
+					if (coursesList.get(i).getCourse().getClassTime().overlaps(coursesList.get(j).getCourse().getClassTime()))
+						errors.add(new Error(ErrorType.ClassTimeCollisionError, coursesList.get(i).getCourse().getCode(), coursesList.get(j).getCourse().getCode()));
+
+					// Check Exam Time Conflict.
+
+				}
+			}
+		}
+
+		return errors;
+	}
+
 	private ObjectNode finalize(JsonNode json, ObjectMapper objectMapper) {
 		ObjectNode answer = objectMapper.createObjectNode();
-		answer.put("success", true);
-		answer.set("data", objectMapper.createObjectNode());
+
+		Student student = students.get(json.get("code").asInt());
+		if (student == null) {
+			answer.put("success", false);
+			answer.put("error", "StudentNotFound");
+			return answer;
+		}
+
+		List<Error> errors = checkFinalizing(student);
+
+		if (errors.size() == 0) {
+			student.finalizeCourses();
+			answer.put("success", true);
+			answer.set("data", objectMapper.createObjectNode());
+			return answer;
+		}
+
+		// Maybe all errors should be set in output.
+		answer.put("success", false);
+		answer.put("error", errors.get(0).errorMessage());
 		return answer;
 	}
 }
