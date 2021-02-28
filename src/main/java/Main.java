@@ -2,10 +2,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.Year;
-import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -19,14 +15,14 @@ public class Main {
 			String data = splittedLine[1];
 			ObjectMapper objectMapper = new ObjectMapper();
 
-			JsonNode json = null;
+			JsonNode jsonData = null;
 			try {
-				json = objectMapper.readTree(data);
+				jsonData = objectMapper.readTree(data);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
 
-			bolbolestan.run(command, json, objectMapper);
+			bolbolestan.execute(command, jsonData, objectMapper);
 		}
 	}
 }

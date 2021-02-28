@@ -18,24 +18,23 @@ public class Bolbolestan {
 		this.students = new HashMap<>();
 	}
 
-	public void run(String command, JsonNode json, ObjectMapper objectMapper) {
+	public void execute(String command, JsonNode data, ObjectMapper objectMapper) {
 		// Call Command Handler.
 		JsonNode jsonAnswer = switch (command) {
-			case "addOffering" -> this.addOffering(json, objectMapper);
-			case "addStudent" -> this.addStudent(json, objectMapper);
-			case "getOfferings" -> this.getOfferings(json, objectMapper);
-			case "getOffering" -> this.getOffering(json, objectMapper);
-			case "addToWeeklySchedule" -> this.addToWeeklySchedule(json, objectMapper);
-			case "removeFromWeeklySchedule" -> this.removeFromWeeklySchedule(json, objectMapper);
-			case "getWeeklySchedule" -> this.getWeeklySchedule(json, objectMapper);
-			case "finalize" -> this.finalize(json, objectMapper);
+			case "addOffering" -> this.addOffering(data, objectMapper);
+			case "addStudent" -> this.addStudent(data, objectMapper);
+			case "getOfferings" -> this.getOfferings(data, objectMapper);
+			case "getOffering" -> this.getOffering(data, objectMapper);
+			case "addToWeeklySchedule" -> this.addToWeeklySchedule(data, objectMapper);
+			case "removeFromWeeklySchedule" -> this.removeFromWeeklySchedule(data, objectMapper);
+			case "getWeeklySchedule" -> this.getWeeklySchedule(data, objectMapper);
+			case "finalize" -> this.finalize(data, objectMapper);
 			default -> objectMapper.createObjectNode();
 		};
 
 		// Print Output.
 		try {
-			String stringAnswer = objectMapper.writeValueAsString(jsonAnswer);
-			System.out.println(stringAnswer);
+			System.out.println(objectMapper.writeValueAsString(jsonAnswer));
 		}
 		catch (JsonProcessingException e) {
 			e.printStackTrace();

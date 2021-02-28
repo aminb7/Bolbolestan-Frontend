@@ -7,7 +7,7 @@ public class Student {
 	private int studentId;
 	private String name;
 	private Year enteredAt;
-	private Map<Course, CourseState> courses;
+	private Map<Integer, SelectedCource> courses;
 
 	public Student(int studentId, String name, Year enteredAt) {
 		this.studentId = studentId;
