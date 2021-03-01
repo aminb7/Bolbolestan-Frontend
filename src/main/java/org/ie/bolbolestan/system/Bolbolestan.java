@@ -67,7 +67,7 @@ public class Bolbolestan {
 		this.students.put(student.getStudentId(), student);
 	}
 
-	public Course getCourse(Integer code) throws OfferingNotFoundException {
+	protected Course getCourse(Integer code) throws OfferingNotFoundException {
 		Course course = courses.get(code);
 		if (course == null)
 			throw new OfferingNotFoundException();
@@ -75,11 +75,11 @@ public class Bolbolestan {
 		return course;
 	}
 
-	public List<Course> getCourses() {
+	protected List<Course> getCourses() {
 		return Arrays.asList(courses.values().toArray(new Course[0]));
 	}
 
-	public Student getStudent(Integer studentId) throws StudentNotFoundException {
+	protected Student getStudent(Integer studentId) throws StudentNotFoundException {
 		Student student = students.get(studentId);
 		if (student == null)
 			throw new StudentNotFoundException();
@@ -87,12 +87,12 @@ public class Bolbolestan {
 		return student;
 	}
 
-	public void checkStudentExists(Integer studentId) throws StudentNotFoundException {
+	protected void checkStudentExists(Integer studentId) throws StudentNotFoundException {
 		if (!students.containsKey(studentId))
 			throw new StudentNotFoundException();
 	}
 
-	public List<Student> getStudents() {
+	protected List<Student> getStudents() {
 		return Arrays.asList(students.values().toArray(new Student[0]));
 	}
 
@@ -140,7 +140,7 @@ public class Bolbolestan {
 
 	protected ObjectNode getOffering(JsonNode jsonInput) throws Exception {
 		checkStudentExists(jsonInput.get("StudentId").asInt());
-		Course course = this.getCourse(jsonInput.get("StudentId").asInt());
+		Course course = this.getCourse(jsonInput.get("code").asInt());
 		return course.getJsonFullInfo();
 	}
 
@@ -196,7 +196,7 @@ public class Bolbolestan {
 				exception.addError(new CapacityException(selectedCourses.get(i).getCourse().getCode()));
 
 			// Checking Conflicts.
-			for (int j = 0; j < selectedCourses.size(); j++) {
+			for (int j = i; j < selectedCourses.size(); j++) {
 				if (i != j) {
 					// Check Class Time Conflict.
 					if (selectedCourse.getCourse().getClassTime().overlaps(selectedCourses.get(j).getCourse().getClassTime()))

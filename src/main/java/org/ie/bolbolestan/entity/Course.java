@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Objects;
 
 public class Course {
-
 	private final int code;
 	private final String name;
 	private final String instructor;
@@ -52,6 +51,10 @@ public class Course {
 		return this.code;
 	}
 
+	public String getInstructor() {
+		return instructor;
+	}
+
 	public int getUnits() {
 		return this.units;
 	}
@@ -68,6 +71,10 @@ public class Course {
 
 	public ExamTime getExamTime() {
 		return examTime;
+	}
+
+	public String[] getPrerequisites() {
+		return prerequisites;
 	}
 
 	public ObjectNode getJsonSummary() {
