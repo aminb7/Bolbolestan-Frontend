@@ -28,7 +28,7 @@ public class MultiException extends Exception {
 		return result;
 	}
 
-	public void addMessage(Exception exception) {
+	public void addError(Exception exception) {
 		this.exceptions.add(exception);
 	}
 

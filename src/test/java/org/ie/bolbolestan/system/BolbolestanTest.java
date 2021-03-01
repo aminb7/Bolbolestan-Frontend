@@ -21,7 +21,11 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.*;
+import org.junit.rules.ExpectedException;
+
 class BolbolestanTest {
+
 	Bolbolestan bolbolestan;
 
 	@BeforeEach
@@ -64,14 +68,16 @@ class BolbolestanTest {
 		assertEquals(students.get(0), student);
 	}
 
-//	@Test(expected = StudentNotFoundException.class)
-//	void getOfferingsShouldThrowExceptionBecauseTheStudentDoesNotFound() throws Exception {
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		ObjectNode data = objectMapper.createObjectNode();
-//		data.put("StudentId", 1);
-//
-//		bolbolestan.getOfferings(data);
-//	}
+	@Rule
+	public final ExpectedException exception = ExpectedException.none();
+	@Test
+	void getOfferingsShouldThrowExceptionBecauseTheStudentDoesNotFound() throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode data = objectMapper.createObjectNode();
+		data.put("StudentId", 1);
 
+		bolbolestan.getOfferings(data);
 
+		exception.expect(StudentNotFoundException.class);
+	}
 }

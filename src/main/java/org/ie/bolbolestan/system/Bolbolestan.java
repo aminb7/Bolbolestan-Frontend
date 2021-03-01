@@ -183,27 +183,27 @@ public class Bolbolestan {
 
 		int selectedUnits = student.getSelectedUnits();
 		if (selectedUnits < 12)
-			exception.addMessage(new MinimumUnitsException());
+			exception.addError(new MinimumUnitsException());
 
 		if (selectedUnits > 20)
-			exception.addMessage(new MaximumUnitsException());
+			exception.addError(new MaximumUnitsException());
 
 		for (int i = 0; i < coursesList.size(); i++) {
 			if ((coursesList.get(i).getState() == CourseState.NON_FINALIZED) &&
 					(coursesList.get(i).getCourse().getNumberOfStudents() >= coursesList.get(i).getCourse().getCapacity()))
-				exception.addMessage( new CapacityException(coursesList.get(i).getCourse().getCode()));
+				exception.addError( new CapacityException(coursesList.get(i).getCourse().getCode()));
 
 			// Checking Conflicts.
 			for (int j = 0; j < coursesList.size(); j++) {
 				if (i != j) {
 					// Check Class Time Conflict.
 					if (coursesList.get(i).getCourse().getClassTime().overlaps(coursesList.get(j).getCourse().getClassTime()))
-						exception.addMessage(new ClassTimeCollisionException(coursesList.get(i).getCourse().getCode(),
+						exception.addError(new ClassTimeCollisionException(coursesList.get(i).getCourse().getCode(),
 								coursesList.get(j).getCourse().getCode()));
 
 					// Check Exam Time Conflict.
 					if (coursesList.get(i).getCourse().getExamTime().overlaps(coursesList.get(j).getCourse().getExamTime()))
-						exception.addMessage(new ExamTimeCollisionException(coursesList.get(i).getCourse().getCode(),
+						exception.addError(new ExamTimeCollisionException(coursesList.get(i).getCourse().getCode(),
 								coursesList.get(j).getCourse().getCode()));
 				}
 			}
