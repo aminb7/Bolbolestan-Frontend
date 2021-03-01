@@ -43,8 +43,9 @@ public class Student {
 
 	public void finalizeCourses() {
 		for (Map.Entry<Integer, SelectedCourse> entry : courses.entrySet()){
+			if (entry.getValue().getState() == CourseState.NON_FINALIZED)
+				entry.getValue().getCourse().incrementNumOfStudents();
 			entry.getValue().setState(CourseState.FINALIZED);
-			entry.getValue().getCourse().incrementNumOfStudents();
 		}
 	}
 }
