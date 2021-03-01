@@ -9,12 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClassTimeTest {
 
 	@Test
-	public void overlapsShouoldReturnTrueWhenTwoClassTimesHaveTwoSameDays() {
+	public void overlapsShouldReturnFalseWhenTwoClassTimesHaveTwoSameDaysAndNotOverlappingTimes() {
 		final String days[] = {"Sunday", "Tuesday"};
 		ClassTime first = new ClassTime(days, "16-17:30");
 		ClassTime second = new ClassTime(days, "14-15:30");
 
-		assertTrue(first.overlaps(second));
+		assertFalse(first.overlaps(second));
 	}
 
 	@Test
