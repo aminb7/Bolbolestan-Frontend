@@ -17,12 +17,8 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.*;
-import org.junit.rules.ExpectedException;
 
 class BolbolestanTest {
 
@@ -68,8 +64,6 @@ class BolbolestanTest {
 		assertEquals(students.get(0), student);
 	}
 
-	@Rule
-	public final ExpectedException exception = ExpectedException.none();
 	@Test
 	void getOfferingsShouldThrowExceptionBecauseTheStudentDoesNotFound() throws Exception {
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -78,6 +72,6 @@ class BolbolestanTest {
 
 		bolbolestan.getOfferings(data);
 
-		exception.expect(StudentNotFoundException.class);
+//		exception.expect(StudentNotFoundException.class);
 	}
 }
