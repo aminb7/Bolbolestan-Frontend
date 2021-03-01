@@ -102,9 +102,10 @@ public class Bolbolestan {
 		String instructor = jsonInput.get("Instructor").asText();
 		int units = jsonInput.get("units").asInt();
 		ClassTime classTime = new ClassTime(days, classTimeNode.get("time").asText());
-		ExamTime examTime = new ExamTime(
-				LocalDateTime.parse(examTimeNode.get("start").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
-				LocalDateTime.parse(examTimeNode.get("end").asText(), DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
+		ExamTime examTime = new ExamTime(LocalDateTime.parse(examTimeNode.get("start").asText(),
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+				LocalDateTime.parse(examTimeNode.get("end").asText(),
+						DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
 
 		int capacity = jsonInput.get("capacity").asInt();
 		String[] prerequisites = this.objectMapper.convertValue(jsonInput.withArray("prerequisites"), String[].class);
@@ -174,8 +175,8 @@ public class Bolbolestan {
 	protected void checkFinalizing(Student student) throws MultiException {
 		MultiException exception = new MultiException();
 
-		Map<Integer, SelectedCourse> courses = student.getCourses();
-		List<SelectedCourse> coursesList = Arrays.asList(courses.values().toArray(new SelectedCourse[0]));
+		Map<Integer, SelectedCourse> studentCourses = student.getCourses();
+		List<SelectedCourse> selectedCourses = Arrays.asList(studentCourses.values().toArray(new SelectedCourse[0]));
 
 		int selectedUnits = student.getSelectedUnits();
 		if (selectedUnits < 12)
@@ -184,23 +185,24 @@ public class Bolbolestan {
 		if (selectedUnits > 20)
 			exception.addError(new MaximumUnitsException());
 
-		for (int i = 0; i < coursesList.size(); i++) {
-			if ((coursesList.get(i).getState() == CourseState.NON_FINALIZED) &&
-					(coursesList.get(i).getCourse().getNumberOfStudents() >= coursesList.get(i).getCourse().getCapacity()))
-				exception.addError( new CapacityException(coursesList.get(i).getCourse().getCode()));
+		for (int i = 0; i < selectedCourses.size(); i++) {
+			SelectedCourse selectedCourse = selectedCourses.get(i);
+			if ((selectedCourse.getState() == CourseState.NON_FINALIZED) &&
+					(selectedCourse.getCourse().getNumberOfStudents() >= selectedCourse.getCourse().getCapacity()))
+				exception.addError(new CapacityException(selectedCourses.get(i).getCourse().getCode()));
 
 			// Checking Conflicts.
-			for (int j = 0; j < coursesList.size(); j++) {
+			for (int j = 0; j < selectedCourses.size(); j++) {
 				if (i != j) {
 					// Check Class Time Conflict.
-					if (coursesList.get(i).getCourse().getClassTime().overlaps(coursesList.get(j).getCourse().getClassTime()))
-						exception.addError(new ClassTimeCollisionException(coursesList.get(i).getCourse().getCode(),
-								coursesList.get(j).getCourse().getCode()));
+					if (selectedCourse.getCourse().getClassTime().overlaps(selectedCourses.get(j).getCourse().getClassTime()))
+						exception.addError(new ClassTimeCollisionException(selectedCourse.getCourse().getCode(),
+								selectedCourses.get(j).getCourse().getCode()));
 
 					// Check Exam Time Conflict.
-					if (coursesList.get(i).getCourse().getExamTime().overlaps(coursesList.get(j).getCourse().getExamTime()))
-						exception.addError(new ExamTimeCollisionException(coursesList.get(i).getCourse().getCode(),
-								coursesList.get(j).getCourse().getCode()));
+					if (selectedCourse.getCourse().getExamTime().overlaps(selectedCourses.get(j).getCourse().getExamTime()))
+						exception.addError(new ExamTimeCollisionException(selectedCourse.getCourse().getCode(),
+								selectedCourses.get(j).getCourse().getCode()));
 				}
 			}
 		}
