@@ -14,9 +14,11 @@ public class ExamTimeTest {
 
 	@Test
 	public void overlapsShouldReturnTrueWhenTwoExamTimesAreSame() {
-		ExamTime first = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime first = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00",
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse("2021-9-01T09:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
-		ExamTime second = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime second = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00",
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse("2021-9-01T09:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
 
 		assertTrue(first.overlaps(second));
@@ -24,9 +26,11 @@ public class ExamTimeTest {
 
 	@Test
 	public void overlapsShouldReturnFalseWhenTwoExamTimesHaveDifferentDaysButSameClassHours() {
-		ExamTime first = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime first = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00",
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse("2021-9-01T09:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
-		ExamTime second = new ExamTime(LocalDateTime.parse("2021-9-02T08:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime second = new ExamTime(LocalDateTime.parse("2021-9-02T08:00:00",
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse("2021-9-02T09:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
 
 		assertFalse(first.overlaps(second));
@@ -34,9 +38,11 @@ public class ExamTimeTest {
 
 	@Test
 	public void overlapsShouldReturnFalseWhenTwoExamTimesHaveDifferentYearsButSameClassHours() {
-		ExamTime first = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime first = new ExamTime(LocalDateTime.parse("2021-9-01T08:00:00",
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse("2021-9-01T09:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
-		ExamTime second = new ExamTime(LocalDateTime.parse("2020-9-01T08:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime second = new ExamTime(LocalDateTime.parse("2020-9-01T08:00:00",
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse("2020-9-01T09:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
 
 		assertFalse(first.overlaps(second));
@@ -54,9 +60,11 @@ public class ExamTimeTest {
 	})
 	public void overlapsShouldReturnTrueWhenTwoExamTimesHaveOverlapInClassHours(String firstStart, String firstEnd,
 	                                                                            String secondStart, String secondEnd) {
-		ExamTime first = new ExamTime(LocalDateTime.parse(firstStart, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime first = new ExamTime(LocalDateTime.parse(firstStart,
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse(firstEnd, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
-		ExamTime second = new ExamTime(LocalDateTime.parse(secondStart, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime second = new ExamTime(LocalDateTime.parse(secondStart,
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse(secondEnd, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
 
 		assertTrue(first.overlaps(second));
@@ -71,9 +79,11 @@ public class ExamTimeTest {
 	})
 	public void overlapsShouldReturnTrueWhenTwoExamTimesHaveNoOverlap(String firstStart, String firstEnd,
 	                                                                  String secondStart, String secondEnd) {
-		ExamTime first = new ExamTime(LocalDateTime.parse(firstStart, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime first = new ExamTime(LocalDateTime.parse(firstStart,
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse(firstEnd, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
-		ExamTime second = new ExamTime(LocalDateTime.parse(secondStart, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
+		ExamTime second = new ExamTime(LocalDateTime.parse(secondStart,
+				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
 				LocalDateTime.parse(secondEnd, DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
 
 		assertFalse(first.overlaps(second));
