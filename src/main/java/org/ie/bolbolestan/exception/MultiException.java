@@ -7,15 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiException extends Exception {
-	private final List<String> messages;
+	private final List<Exception> exceptions;
 
 	public MultiException() {
-		this.messages = new ArrayList<>();
+		this.exceptions = new ArrayList<>();
 	}
 
 	@Override
 	public String getMessage() {
 		String result = "";
+		List<String> messages = new ArrayList<>();
+		exceptions.forEach(exception -> messages.add(exception.getMessage()));
+
 		try {
 			result = new ObjectMapper().writeValueAsString(messages);
 		} catch (JsonProcessingException e) {
@@ -25,11 +28,11 @@ public class MultiException extends Exception {
 		return result;
 	}
 
-	public void addMessage(String message) {
-		this.messages.add(message);
+	public void addMessage(Exception exception) {
+		this.exceptions.add(exception);
 	}
 
-	public boolean getHasError() {
-		return !messages.isEmpty();
+	public boolean hasError() {
+		return !exceptions.isEmpty();
 	}
 }
