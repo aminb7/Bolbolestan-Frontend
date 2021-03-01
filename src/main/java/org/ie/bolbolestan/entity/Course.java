@@ -92,4 +92,8 @@ public class Course {
 		result.set("prerequisites", prerequisites);
 		return result;
 	}
+
+	public void incrementNumOfStudents() {
+		numberOfStudents += 1;
+	}
 }

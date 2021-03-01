@@ -44,6 +44,7 @@ public class Student {
 	public void finalizeCourses() {
 		for (Map.Entry<Integer, SelectedCourse> entry : courses.entrySet()){
 			entry.getValue().setState(CourseState.FINALIZED);
+			entry.getValue().getCourse().incrementNumOfStudents();
 		}
 	}
 }
