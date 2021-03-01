@@ -6,6 +6,8 @@ import org.ie.bolbolestan.entity.ClassTime;
 import org.ie.bolbolestan.entity.Course;
 import org.ie.bolbolestan.entity.ExamTime;
 import org.ie.bolbolestan.entity.Student;
+import org.ie.bolbolestan.exception.CourseAlreadyExistsException;
+import org.ie.bolbolestan.exception.StudentAlreadyExistsException;
 import org.ie.bolbolestan.exception.StudentNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +34,7 @@ class BolbolestanTest {
 	}
 
 	@Test
-	void addOfferingShouldProperlyAddNewOffering() {
+	void addOfferingShouldProperlyAddNewOffering() throws CourseAlreadyExistsException {
 		final String days[] = {"Sunday", "Tuesday"};
 		ClassTime classTime = new ClassTime(days, "16-17:30");
 		ExamTime examTime = new ExamTime(LocalDateTime.parse("2020-9-01T16:00:00", DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
@@ -42,33 +45,33 @@ class BolbolestanTest {
 
 		bolbolestan.addCourse(course);
 
-		Map<Integer, Course> courses = bolbolestan.getAllCources();
+		List<Course> courses = bolbolestan.getCourses();
 
-		assertTrue(courses.containsKey(code));
 		assertEquals(courses.size(), 1);
-		assertEquals(courses.get(code), course);
+		assertEquals(courses.get(0), course);
 	}
 
 	@Test
-	void addStudentShouldProperlyAddNewStudent() {
+	void addStudentShouldProperlyAddNewStudent() throws StudentAlreadyExistsException {
 		int studentId = 810111111;
 		Student student = new Student(studentId, "student", Year.of(1999));
 
 		bolbolestan.addStudent(student);
 
-		Map<Integer, Student> students = bolbolestan.getAllStudents();
+		List<Student> students = bolbolestan.getStudents();
 
-		assertTrue(students.containsKey(studentId));
 		assertEquals(students.size(), 1);
-		assertEquals(students.get(studentId), student);
+		assertEquals(students.get(0), student);
 	}
 
-//	@Test(expected = StudentNotFoundException)
-//	void getOfferingsShouldThrowExceptionBecauseTheStudentDoesNotFound() throws Exception {\
+//	@Test(expected = StudentNotFoundException.class)
+//	void getOfferingsShouldThrowExceptionBecauseTheStudentDoesNotFound() throws Exception {
 //		ObjectMapper objectMapper = new ObjectMapper();
 //		ObjectNode data = objectMapper.createObjectNode();
 //		data.put("StudentId", 1);
 //
 //		bolbolestan.getOfferings(data);
 //	}
+
+
 }

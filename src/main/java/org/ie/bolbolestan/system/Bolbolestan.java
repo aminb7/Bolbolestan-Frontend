@@ -92,9 +92,9 @@ public class Bolbolestan {
 			throw new StudentNotFoundException();
 	}
 
-//	public List<Student> getStudents() {
-//		return Arrays.asList(students.values().toArray(new Student[0]));
-//	}
+	public List<Student> getStudents() {
+		return Arrays.asList(students.values().toArray(new Student[0]));
+	}
 
 	protected ObjectNode addOffering(JsonNode jsonInput) throws CourseAlreadyExistsException {
 		JsonNode classTimeNode = jsonInput.with("classTime");
