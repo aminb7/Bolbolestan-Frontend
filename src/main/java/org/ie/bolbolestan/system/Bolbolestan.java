@@ -1,7 +1,7 @@
 package org.ie.bolbolestan.system;
 
 import org.ie.bolbolestan.entity.*;
-import org.ie.bolbolestan.exception.MultiException;
+import org.ie.bolbolestan.exception.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -40,7 +40,7 @@ public class Bolbolestan {
 				case "removeFromWeeklySchedule" -> this.removeFromWeeklySchedule(jsonData);
 				case "getWeeklySchedule" -> this.getWeeklySchedule(jsonData);
 				case "finalize" -> this.finalize(jsonData);
-				default -> throw new Exception("CommandNotFound");
+				default -> throw new CommandNotFoundException();
 			};
 
 			message.set("data", outputData);
@@ -85,7 +85,7 @@ public class Bolbolestan {
 
 	private ArrayNode getOfferings(JsonNode jsonInput) throws Exception {
 		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
-			throw new Exception("StudentNotFound");
+			throw new StudentNotFoundException();
 
 		ArrayNode answerData = this.objectMapper.createArrayNode();
 		List<Course> coursesList = Arrays.asList(courses.values().toArray(new Course[0]));
@@ -99,11 +99,11 @@ public class Bolbolestan {
 
 	private ObjectNode getOffering(JsonNode jsonInput) throws Exception {
 		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
-			throw new Exception("StudentNotFound");
+			throw new StudentNotFoundException();
 
 		Course course = courses.get(jsonInput.get("code").asInt());
 		if (course == null)
-			throw new Exception("OfferingNotFound");
+			throw new OfferingNotFoundException();
 
 		return course.getJsonFullInfo();
 	}
@@ -111,11 +111,11 @@ public class Bolbolestan {
 	private ObjectNode addToWeeklySchedule(JsonNode jsonInput) throws Exception {
 		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
-			throw new Exception("StudentNotFound");
+			throw new StudentNotFoundException();
 
 		Course course = courses.get(jsonInput.get("code").asInt());
 		if (course == null)
-			throw new Exception("OfferingNotFound");
+			throw new OfferingNotFoundException();
 
 		student.addCourse(course);
 		return this.objectMapper.createObjectNode();
@@ -124,11 +124,11 @@ public class Bolbolestan {
 	private ObjectNode removeFromWeeklySchedule(JsonNode jsonInput) throws Exception {
 		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
-			throw new Exception("StudentNotFound");
+			throw new StudentNotFoundException();
 
 		Course course = courses.get(jsonInput.get("code").asInt());
 		if (course == null)
-			throw new Exception("OfferingNotFound");
+			throw new OfferingNotFoundException();
 
 		student.removeCourse(course);
 		return this.objectMapper.createObjectNode();
@@ -137,7 +137,7 @@ public class Bolbolestan {
 	private ObjectNode getWeeklySchedule(JsonNode jsonInput) throws Exception {
 		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
-			throw new Exception("StudentNotFound");
+			throw new StudentNotFoundException();
 
 		ObjectNode answerData = this.objectMapper.createObjectNode();
 		ArrayNode weeklySchedule = this.objectMapper.createArrayNode();
@@ -164,40 +164,40 @@ public class Bolbolestan {
 
 		int selectedUnits = student.getSelectedUnits();
 		if (selectedUnits < 12)
-			exception.addMessage("MinimumUnitsError");
+			exception.addMessage(new MinimumUnitsException());
 
 		if (selectedUnits > 20)
-			exception.addMessage("MaximumUnitsError");
+			exception.addMessage(new MaximumUnitsException());
 
 		for (int i = 0; i < coursesList.size(); i++) {
 			if ((coursesList.get(i).getState() == CourseState.NON_FINALIZED) &&
 					(coursesList.get(i).getCourse().getNumberOfStudents() >= coursesList.get(i).getCourse().getCapacity()))
-				exception.addMessage("CapacityError " + coursesList.get(i).getCourse().getCode());
+				exception.addMessage( new CapacityException(coursesList.get(i).getCourse().getCode()));
 
 			// Checking Conflicts.
 			for (int j = 0; j < coursesList.size(); j++) {
 				if (i != j) {
 					// Check Class Time Conflict.
 					if (coursesList.get(i).getCourse().getClassTime().overlaps(coursesList.get(j).getCourse().getClassTime()))
-						exception.addMessage("ClassTimeCollisionError " + coursesList.get(i).getCourse().getCode()
-								+ " " + coursesList.get(j).getCourse().getCode());
+						exception.addMessage(new ClassTimeCollisionException(coursesList.get(i).getCourse().getCode(),
+								coursesList.get(j).getCourse().getCode()));
 
 					// Check Exam Time Conflict.
 					if (coursesList.get(i).getCourse().getExamTime().overlaps(coursesList.get(j).getCourse().getExamTime()))
-						exception.addMessage("ExamTimeCollisionError " + coursesList.get(i).getCourse().getCode()
-								+ " " + coursesList.get(j).getCourse().getCode());
+						exception.addMessage(new ExamTimeCollisionException(coursesList.get(i).getCourse().getCode(),
+								coursesList.get(j).getCourse().getCode()));
 				}
 			}
 		}
 
-		if (exception.getHasError())
+		if (exception.hasError())
 			throw exception;
 	}
 
 	private ObjectNode finalize(JsonNode json) throws Exception {
 		Student student = students.get(json.get("StudentId").asInt());
 		if (student == null)
-			throw new Exception("StudentNotFound");
+			throw new StudentNotFoundException();
 
 		checkFinalizing(student);
 		student.finalizeCourses();
