@@ -1,9 +1,9 @@
+package org.ie.bolbolestan.entity;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.Objects;
 
 public class Course {
@@ -52,10 +52,6 @@ public class Course {
 		return this.code;
 	}
 
-	public String getInstructor() {
-		return this.instructor;
-	}
-
 	public int getUnits() {
 		return this.units;
 	}
@@ -72,14 +68,6 @@ public class Course {
 
 	public ExamTime getExamTime() {
 		return examTime;
-	}
-
-	public String[] getPrerequisites() {
-		return prerequisites;
-	}
-
-	public void incrementNumOfStudents() {
-		this.numberOfStudents = this.numberOfStudents + 1;
 	}
 
 	public ObjectNode getJsonSummary() {

@@ -1,3 +1,5 @@
+package org.ie.bolbolestan.entity;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public interface EventTime {

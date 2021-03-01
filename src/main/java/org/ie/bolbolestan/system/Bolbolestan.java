@@ -1,12 +1,12 @@
-import com.fasterxml.jackson.core.JsonProcessingException;
+package org.ie.bolbolestan.system;
+
+import org.ie.bolbolestan.entity.*;
+import org.ie.bolbolestan.exception.MultiException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
@@ -23,15 +23,15 @@ public class Bolbolestan {
 		this.objectMapper = new ObjectMapper();
 	}
 
-	public void execute(String command, String data) {
+	public ObjectNode execute(String command, String inputData) {
 		ObjectNode message = this.objectMapper.createObjectNode();
 
 		try {
 			message.put("success", true);
-			JsonNode jsonData = objectMapper.readTree(data);
+			JsonNode jsonData = objectMapper.readTree(inputData);
 
 			// Call the command handler.
-			JsonNode jsonAnswer = switch (command) {
+			JsonNode outputData = switch (command) {
 				case "addOffering" -> this.addOffering(jsonData);
 				case "addStudent" -> this.addStudent(jsonData);
 				case "getOfferings" -> this.getOfferings(jsonData);
@@ -40,21 +40,17 @@ public class Bolbolestan {
 				case "removeFromWeeklySchedule" -> this.removeFromWeeklySchedule(jsonData);
 				case "getWeeklySchedule" -> this.getWeeklySchedule(jsonData);
 				case "finalize" -> this.finalize(jsonData);
-				default -> this.objectMapper.createObjectNode();
+				default -> throw new Exception("CommandNotFound");
 			};
 
-			message.set("data", jsonAnswer);
+			message.set("data", outputData);
 		}
 		catch (Exception error) {
 			message.put("success", false);
 			message.put("error", error.getMessage());
 		}
 
-		try {
-			System.out.println(this.objectMapper.writeValueAsString(message));
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+		return message;
 	}
 
 	private ObjectNode addOffering(JsonNode jsonInput) {
