@@ -37,7 +37,8 @@ class ClassTimeTest {
 	@ParameterizedTest
 	@CsvSource({"16-17:30,16-17:30", "16-17:30,17-17:30", "16-17:30,15-17:30", "16-17:30,15-17", "16-17:30,15-18:30",
 			"16-17:30,17-18:30", "16-17:30,16-18:30", "16-17:30,16-17"})
-	public void overlapsShouoldReturnTrueWhenTwoClassTimesHaveOverlapInOneDayAndClassHours(String firstTime, String secondTime) {
+	public void overlapsShouoldReturnTrueWhenTwoClassTimesHaveOverlapInOneDayAndClassHours(String firstTime,
+	                                                                                       String secondTime) {
 		final String firstDays[] = {"Sunday", "Tuesday"};
 		final String secondDays[] = {"Sunday", "Wednesday"};
 		ClassTime first = new ClassTime(firstDays, firstTime);
