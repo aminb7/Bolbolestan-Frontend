@@ -29,10 +29,10 @@ public class ClassTime implements EventTime {
 		if (this.days[0].equals(other.days[0]) || this.days[this.days.length - 1].equals(other.days[0])
 				|| this.days[0].equals(other.days[other.days.length - 1])
 				|| this.days[this.days.length - 1].equals(other.days[other.days.length - 1])) {
-			return true;
+			return this.start.isBefore(other.end) && this.end.isAfter(other.start);
 		}
 
-		return this.start.isBefore(other.end) && this.end.isAfter(other.start);
+		return false;
 	}
 
 	@Override
