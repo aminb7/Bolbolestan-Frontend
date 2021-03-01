@@ -179,15 +179,18 @@ class BolbolestanTest {
 	}
 
 	@Test
-	void finalizeShouldThrowExceptionIfSumOfUnitsIsUnder12() throws StudentAlreadyExistsException {
+	void finalizeShouldThrowExceptionIfSumOfUnitsIsUnder12() throws StudentAlreadyExistsException, StudentNotFoundException {
 		int studentId = 810111111;
 		Student student = new Student(studentId, "student", Year.of(1999));
 		bolbolestan.addStudent(student);
 		ObjectNode data = objectMapper.createObjectNode();
 		data.put("StudentId", student.getStudentId());
 
-		assertThrows(MinimumUnitsException.class, () -> {
+		try {
 			bolbolestan.finalize(data);
-		});
+			fail();
+		} catch (MultiException exception) {
+			assertEquals(MinimumUnitsException.class, exception.getExceptions().get(0).getClass());
+		}
 	}
 }

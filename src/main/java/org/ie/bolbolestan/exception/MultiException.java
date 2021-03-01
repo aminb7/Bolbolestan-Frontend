@@ -35,4 +35,8 @@ public class MultiException extends Exception {
 	public boolean hasError() {
 		return !exceptions.isEmpty();
 	}
+
+	public List<Exception> getExceptions() {
+		return exceptions;
+	}
 }

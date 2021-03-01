@@ -215,7 +215,7 @@ public class Bolbolestan {
 			throw exception;
 	}
 
-	protected ObjectNode finalize(JsonNode jsonInput) throws Exception {
+	protected ObjectNode finalize(JsonNode jsonInput) throws StudentNotFoundException, MultiException {
 		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
 		checkFinalizing(student);
 		student.finalizeCourses();
