@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Student {
-
 	private final int studentId;
 	private final String name;
 	private final Year enteredAt;
@@ -16,6 +15,10 @@ public class Student {
 		this.name = name;
 		this.enteredAt = enteredAt;
 		this.courses = new HashMap<>();
+	}
+
+	public int getStudentId() {
+		return studentId;
 	}
 
 	public void addCourse(Course course) {

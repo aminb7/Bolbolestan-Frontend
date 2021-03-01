@@ -53,21 +53,50 @@ public class Bolbolestan {
 		return message;
 	}
 
-	protected void addCourse(Course course) {
+	protected void addCourse(Course course) throws CourseAlreadyExistsException {
 		if (courses.containsKey(course.getCode()))
 			throw new CourseAlreadyExistsException();
 
 		this.courses.put(course.getCode(), course);
 	}
 
-	protected void addStudent(Student student) {
+	protected void addStudent(Student student) throws StudentAlreadyExistsException {
 		if (students.containsKey(student.getStudentId()))
 			throw new StudentAlreadyExistsException();
 
 		this.students.put(student.getStudentId(), student);
 	}
 
-	protected ObjectNode addOffering(JsonNode jsonInput) {
+	public Course getCourse(Integer code) throws OfferingNotFoundException {
+		Course course = courses.get(code);
+		if (course == null)
+			throw new OfferingNotFoundException();
+
+		return course;
+	}
+
+	public List<Course> getCourses() {
+		return Arrays.asList(courses.values().toArray(new Course[0]));
+	}
+
+	public Student getStudent(Integer studentId) throws StudentNotFoundException {
+		Student student = students.get(studentId);
+		if (student == null)
+			throw new StudentNotFoundException();
+
+		return student;
+	}
+
+	public void checkStudentExists(Integer studentId) throws StudentNotFoundException {
+		if (!students.containsKey(studentId))
+			throw new StudentNotFoundException();
+	}
+
+//	public List<Student> getStudents() {
+//		return Arrays.asList(students.values().toArray(new Student[0]));
+//	}
+
+	protected ObjectNode addOffering(JsonNode jsonInput) throws CourseAlreadyExistsException {
 		JsonNode classTimeNode = jsonInput.with("classTime");
 		String[] days = this.objectMapper.convertValue(classTimeNode.withArray("days"), String[].class);
 		JsonNode examTimeNode = jsonInput.get("examTime");
@@ -84,25 +113,22 @@ public class Bolbolestan {
 		int capacity = jsonInput.get("capacity").asInt();
 		String[] prerequisites = this.objectMapper.convertValue(jsonInput.withArray("prerequisites"), String[].class);
 		this.addCourse(new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
-
 		return this.objectMapper.createObjectNode();
 	}
 
-	protected ObjectNode addStudent(JsonNode jsonInput) {
+	protected ObjectNode addStudent(JsonNode jsonInput) throws StudentAlreadyExistsException {
 		Student newStudent = new Student(jsonInput.get("studentId").asInt(), jsonInput.get("name").asText(),
 				Year.of(jsonInput.get("enteredAt").asInt()));
 
 		this.addStudent(newStudent);
-
 		return this.objectMapper.createObjectNode();
 	}
 
 	protected ArrayNode getOfferings(JsonNode jsonInput) throws Exception {
-		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
-			throw new StudentNotFoundException();
+		checkStudentExists(jsonInput.get("StudentId").asInt());
 
 		ArrayNode answerData = this.objectMapper.createArrayNode();
-		List<Course> coursesList = Arrays.asList(courses.values().toArray(new Course[0]));
+		List<Course> coursesList = this.getCourses();
 		coursesList.sort(Comparator.comparing(Course::getName));
 
 		for (Course course : coursesList)
@@ -112,47 +138,27 @@ public class Bolbolestan {
 	}
 
 	protected ObjectNode getOffering(JsonNode jsonInput) throws Exception {
-		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
-			throw new StudentNotFoundException();
-
-		Course course = courses.get(jsonInput.get("code").asInt());
-		if (course == null)
-			throw new OfferingNotFoundException();
-
+		checkStudentExists(jsonInput.get("StudentId").asInt());
+		Course course = this.getCourse(jsonInput.get("StudentId").asInt());
 		return course.getJsonFullInfo();
 	}
 
 	protected ObjectNode addToWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = students.get(jsonInput.get("StudentId").asInt());
-		if (student == null)
-			throw new StudentNotFoundException();
-
-		Course course = courses.get(jsonInput.get("code").asInt());
-		if (course == null)
-			throw new OfferingNotFoundException();
-
+		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
+		Course course = this.getCourse(jsonInput.get("code").asInt());
 		student.addCourse(course);
 		return this.objectMapper.createObjectNode();
 	}
 
 	protected ObjectNode removeFromWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = students.get(jsonInput.get("StudentId").asInt());
-		if (student == null)
-			throw new StudentNotFoundException();
-
-		Course course = courses.get(jsonInput.get("code").asInt());
-		if (course == null)
-			throw new OfferingNotFoundException();
-
+		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
+		Course course = this.getCourse(jsonInput.get("code").asInt());
 		student.removeCourse(course);
 		return this.objectMapper.createObjectNode();
 	}
 
 	protected ObjectNode getWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = students.get(jsonInput.get("StudentId").asInt());
-		if (student == null)
-			throw new StudentNotFoundException();
-
+		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
 		ObjectNode answerData = this.objectMapper.createObjectNode();
 		ArrayNode weeklySchedule = this.objectMapper.createArrayNode();
 
@@ -162,7 +168,6 @@ public class Bolbolestan {
 		for (SelectedCourse selectedCourse : coursesList) {
 			ObjectNode courseData = selectedCourse.getCourse().getJsonFullInfo();
 			courseData.put("status", selectedCourse.getState().toString());
-
 			weeklySchedule.add(courseData);
 		}
 
@@ -208,14 +213,10 @@ public class Bolbolestan {
 			throw exception;
 	}
 
-	protected ObjectNode finalize(JsonNode json) throws Exception {
-		Student student = students.get(json.get("StudentId").asInt());
-		if (student == null)
-			throw new StudentNotFoundException();
-
+	protected ObjectNode finalize(JsonNode jsonInput) throws Exception {
+		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
 		checkFinalizing(student);
 		student.finalizeCourses();
-
 		return this.objectMapper.createObjectNode();
 	}
 }
