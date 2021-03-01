@@ -53,7 +53,21 @@ public class Bolbolestan {
 		return message;
 	}
 
-	private ObjectNode addOffering(JsonNode jsonInput) {
+	protected void addCourse(Course course) {
+		if (courses.containsKey(course.getCode()))
+			throw new CourseAlreadyExistsException();
+
+		this.courses.put(course.getCode(), course);
+	}
+
+	protected void addStudent(Student student) {
+		if (students.containsKey(student.getStudentId()))
+			throw new StudentAlreadyExistsException();
+
+		this.students.put(student.getStudentId(), student);
+	}
+
+	protected ObjectNode addOffering(JsonNode jsonInput) {
 		JsonNode classTimeNode = jsonInput.with("classTime");
 		String[] days = this.objectMapper.convertValue(classTimeNode.withArray("days"), String[].class);
 		JsonNode examTimeNode = jsonInput.get("examTime");
@@ -69,21 +83,21 @@ public class Bolbolestan {
 
 		int capacity = jsonInput.get("capacity").asInt();
 		String[] prerequisites = this.objectMapper.convertValue(jsonInput.withArray("prerequisites"), String[].class);
-		this.courses.put(code, new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
+		this.addCourse(new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
 
 		return this.objectMapper.createObjectNode();
 	}
 
-	private ObjectNode addStudent(JsonNode jsonInput) {
+	protected ObjectNode addStudent(JsonNode jsonInput) {
 		Student newStudent = new Student(jsonInput.get("studentId").asInt(), jsonInput.get("name").asText(),
 				Year.of(jsonInput.get("enteredAt").asInt()));
 
-		this.students.put(jsonInput.get("studentId").asInt(), newStudent);
+		this.addStudent(newStudent);
 
 		return this.objectMapper.createObjectNode();
 	}
 
-	private ArrayNode getOfferings(JsonNode jsonInput) throws Exception {
+	protected ArrayNode getOfferings(JsonNode jsonInput) throws Exception {
 		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
 			throw new StudentNotFoundException();
 
@@ -97,7 +111,7 @@ public class Bolbolestan {
 		return answerData;
 	}
 
-	private ObjectNode getOffering(JsonNode jsonInput) throws Exception {
+	protected ObjectNode getOffering(JsonNode jsonInput) throws Exception {
 		if (!students.containsKey(jsonInput.get("StudentId").asInt()))
 			throw new StudentNotFoundException();
 
@@ -108,7 +122,7 @@ public class Bolbolestan {
 		return course.getJsonFullInfo();
 	}
 
-	private ObjectNode addToWeeklySchedule(JsonNode jsonInput) throws Exception {
+	protected ObjectNode addToWeeklySchedule(JsonNode jsonInput) throws Exception {
 		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
 			throw new StudentNotFoundException();
@@ -121,7 +135,7 @@ public class Bolbolestan {
 		return this.objectMapper.createObjectNode();
 	}
 
-	private ObjectNode removeFromWeeklySchedule(JsonNode jsonInput) throws Exception {
+	protected ObjectNode removeFromWeeklySchedule(JsonNode jsonInput) throws Exception {
 		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
 			throw new StudentNotFoundException();
@@ -134,7 +148,7 @@ public class Bolbolestan {
 		return this.objectMapper.createObjectNode();
 	}
 
-	private ObjectNode getWeeklySchedule(JsonNode jsonInput) throws Exception {
+	protected ObjectNode getWeeklySchedule(JsonNode jsonInput) throws Exception {
 		Student student = students.get(jsonInput.get("StudentId").asInt());
 		if (student == null)
 			throw new StudentNotFoundException();
@@ -156,7 +170,7 @@ public class Bolbolestan {
 		return answerData;
 	}
 
-	private void checkFinalizing(Student student) throws MultiException {
+	protected void checkFinalizing(Student student) throws MultiException {
 		MultiException exception = new MultiException();
 
 		Map<Integer, SelectedCourse> courses = student.getCourses();
@@ -194,7 +208,7 @@ public class Bolbolestan {
 			throw exception;
 	}
 
-	private ObjectNode finalize(JsonNode json) throws Exception {
+	protected ObjectNode finalize(JsonNode json) throws Exception {
 		Student student = students.get(json.get("StudentId").asInt());
 		if (student == null)
 			throw new StudentNotFoundException();
