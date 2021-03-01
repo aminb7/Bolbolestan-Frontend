@@ -1,4 +1,5 @@
-import org.ie.bolbolestan.entity.ClassTime;
+package org.ie.bolbolestan.entity;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
