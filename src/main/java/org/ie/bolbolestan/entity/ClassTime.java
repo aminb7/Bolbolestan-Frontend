@@ -1,5 +1,7 @@
 package org.ie.bolbolestan.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -13,11 +15,12 @@ public class ClassTime implements EventTime {
 	private final LocalTime start;
 	private final LocalTime end;
 
-	public ClassTime(String[] days, String time) {
+	@JsonCreator
+	public ClassTime(@JsonProperty("days") String[] days, @JsonProperty("time") String time) {
 		this.days = days;
 		String[] times = time.split("-");
-		this.start = LocalTime.parse(times[0], DateTimeFormatter.ofPattern("HH[:mm]"));
-		this.end = LocalTime.parse(times[1], DateTimeFormatter.ofPattern("HH[:mm]"));
+		this.start = LocalTime.parse(times[0], DateTimeFormatter.ofPattern("H[:m]"));
+		this.end = LocalTime.parse(times[1], DateTimeFormatter.ofPattern("H[:m]"));
 	}
 
 	@Override

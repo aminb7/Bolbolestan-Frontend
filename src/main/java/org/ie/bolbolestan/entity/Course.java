@@ -1,5 +1,7 @@
 package org.ie.bolbolestan.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -7,15 +9,36 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Objects;
 
 public class Course {
-	private final int code;
+	private final String code;
+	private final String classCode;
 	private final String name;
-	private final String instructor;
 	private final int units;
-	private final ClassTime classTime;
-	private final ExamTime examTime;
+	private final String type;
+	private final String instructor;
 	private final int capacity;
 	private final String[] prerequisites;
+	private final ClassTime classTime;
+	private final ExamTime examTime;
+
 	private int numberOfStudents;
+
+	@JsonCreator
+	public Course(@JsonProperty("code") String code, @JsonProperty("classCode") String classCode,
+	              @JsonProperty("name") String name, @JsonProperty("units") int units,
+	              @JsonProperty("type") String type, @JsonProperty("instructor") String instructor,
+	              @JsonProperty("capacity") int capacity, @JsonProperty("prerequisites") String[] prerequisites,
+	              @JsonProperty("classTime") ClassTime classTime, @JsonProperty("examTime") ExamTime examTime) {
+		this.code = code;
+		this.classCode = classCode;
+		this.name = name;
+		this.units = units;
+		this.type = type;
+		this.instructor = instructor;
+		this.capacity = capacity;
+		this.prerequisites = prerequisites;
+		this.classTime = classTime;
+		this.examTime = examTime;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -30,24 +53,11 @@ public class Course {
 		return Objects.hash(code);
 	}
 
-	public Course(int code, String name, String instructor, int units, ClassTime classTime, ExamTime examTime,
-	              int capacity, String[] prerequisites) {
-		this.code = code;
-		this.name = name;
-		this.instructor = instructor;
-		this.units = units;
-		this.classTime = classTime;
-		this.examTime = examTime;
-		this.capacity = capacity;
-		this.prerequisites = prerequisites;
-		this.numberOfStudents = 0;
-	}
-
 	public String getName() {
 		return this.name;
 	}
 
-	public int getCode() {
+	public String getCode() {
 		return this.code;
 	}
 

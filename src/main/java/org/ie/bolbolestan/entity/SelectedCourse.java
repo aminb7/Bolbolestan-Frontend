@@ -4,9 +4,9 @@ public class SelectedCourse {
 	private Course course;
 	private CourseState state;
 
-	public SelectedCourse(Course course, CourseState state) {
+	public SelectedCourse(Course course) {
 		this.course = course;
-		this.state = state;
+		this.state = CourseState.NON_FINALIZED;
 	}
 
 	public Course getCourse() {
@@ -17,5 +17,7 @@ public class SelectedCourse {
 		return state;
 	}
 
-	public void setState(CourseState state) {this.state = state; }
+	public void setState(CourseState state) {
+		this.state = state;
+	}
 }
