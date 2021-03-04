@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Student {
@@ -51,6 +52,10 @@ public class Student {
 		}
 
 		return selectedUnits;
+	}
+
+	public void setPassedCourses(PassedCourse[] passedCourses) {
+		List.of(passedCourses).forEach(passedCourse -> this.passedCourses.put(passedCourse.getCode(), passedCourse));
 	}
 
 	public void finalizeCourses() {

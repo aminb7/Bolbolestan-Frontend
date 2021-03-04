@@ -1,33 +1,19 @@
 package org.ie.bolbolestan.system;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.ie.bolbolestan.entity.ClassTime;
-import org.ie.bolbolestan.entity.Course;
-import org.ie.bolbolestan.entity.ExamTime;
-import org.ie.bolbolestan.entity.Student;
 import org.ie.bolbolestan.exception.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class BolbolestanTest {
 
-	Bolbolestan bolbolestan;
+	HelperApplication bolbolestan;
 	ObjectMapper objectMapper;
 
 	@BeforeEach
 	void setUp() {
-		bolbolestan = new Bolbolestan();
+		bolbolestan = new HelperApplication();
 		objectMapper = new ObjectMapper();
 	}
 

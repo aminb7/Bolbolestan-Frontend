@@ -8,44 +8,28 @@ import java.util.List;
 import java.util.Map;
 
 public class RawDataCollection {
-	String Courses;
-	String students;
-	Map<String, String> grades;
 
-	final String coursesURI = "http://138.197.181.131:5000/api/courses";
-	final String studentsURI = "http://138.197.181.131:5000/api/students";
-	final String gradesURI = "http://138.197.181.131:5000/api/grades";
+	final static String coursesPath = "/api/courses";
+	final static String studentsPath = "/api/students";
+	final static String gradesPath = "/api/grades";
 
-	public RawDataCollection() {
-		this.Courses = "";
-		this.students = "";
-		this.grades = new HashMap<>();
+	public static String requestCourses(String host) throws IOException, InterruptedException {
+		return HttpGetter.Get(host + coursesPath);
 	}
 
-	public void requestCourses() throws IOException, InterruptedException {
-		this.Courses = HttpGetter.Get(coursesURI);
+	public static String requestStudents(String host) throws IOException, InterruptedException {
+		return HttpGetter.Get(host + studentsPath);
 	}
 
-	public void requestStudents() throws IOException, InterruptedException {
-		this.students = HttpGetter.Get(studentsURI);
-	}
+	public static Map<String, String> requestGrades(String host, List<String> studentIdList)
+			throws IOException, InterruptedException {
+		Map<String, String> grades = new HashMap<>();
 
-	public void requestGrades(List<String> studentIdList) throws IOException, InterruptedException {
 		for (String StudentId : studentIdList) {
-			String currentStudentGrades = HttpGetter.Get(gradesURI + "/" + StudentId);
-			this.grades.put(StudentId, currentStudentGrades);
+			String currentStudentGrades = HttpGetter.Get(host + gradesPath + "/" + StudentId);
+			grades.put(StudentId, currentStudentGrades);
 		}
-	}
 
-	public String getCourses() {
-		return Courses;
-	}
-
-	public String getStudents() {
-		return students;
-	}
-
-	public Map<String, String> getGrades() {
 		return grades;
 	}
 }
