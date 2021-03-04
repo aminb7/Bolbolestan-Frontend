@@ -113,4 +113,32 @@ public class Course {
 	public void incrementNumOfStudents() {
 		numberOfStudents += 1;
 	}
+
+	public String getHtmlTable() {
+		String result = "<td>" + this.code + "</td>"
+				+ "<td>" + this.classCode + "</td>"
+				+ "<td>" + this.name + "</td>"
+				+ "<td>" + this.units + "</td>"
+				+ "<td>" + this.capacity + "</td>"
+				+ "<td>" + this.type + "</td>"
+				+ this.classTime.getHtmlTable()
+				+ this.examTime.getHtmlTable()
+				+ this.getPrerequisitesHtmlTable()
+				+ "<td><a href=\"/course/" + this.code + "/" + this.classCode + "\">Link</a></td>";
+		return result;
+	}
+
+	private String getPrerequisitesHtmlTable() {
+		String result = "<td>";
+
+		for (int i = 0; i < this.prerequisites.length; i++) {
+			if (i > 0)
+				result += "|";
+
+			result +=  this.prerequisites[i];
+		}
+
+		result += "</td>";
+		return result;
+	}
 }

@@ -21,15 +21,15 @@ public class WebServerApplication {
 		Javalin app = Javalin.create().start(port);
 
 		app.get("/courses", helperApplication.new GetCoursesHandler());
-		app.get("/profile/*", helperApplication.new GetProfileHandler());
-		app.get("/course/*/*", helperApplication.new ViewAddCourseHandler());
-		app.get("/add_course/*/*", helperApplication.new AddCourseHandler());
-		app.get("/change_plan/*", helperApplication.new ChangePlanHandler());
-		app.get("/remove_course/*", helperApplication.new RemoveCourseHandler());
-		app.get("/plan/*", helperApplication.new ViewPlanHandler());
-		app.get("/submit/*", helperApplication.new SubmissionHandler());
-		app.get("/check_submission/", helperApplication.new CheckSubmissionHandler());
-		app.get("/submit_ok", helperApplication.new SubmissionOKHandler());
-		app.get("/submit_failed", helperApplication.new SubmissionFailedHandler());
+//		app.get("/profile/*", helperApplication.new GetProfileHandler());
+//		app.get("/course/*/*", helperApplication.new ViewAddCourseHandler());
+//		app.get("/add_course/*/*", helperApplication.new AddCourseHandler());
+//		app.get("/change_plan/*", helperApplication.new ChangePlanHandler());
+//		app.get("/remove_course/*", helperApplication.new RemoveCourseHandler());
+//		app.get("/plan/*", helperApplication.new ViewPlanHandler());
+//		app.get("/submit/*", helperApplication.new SubmissionHandler());
+//		app.get("/check_submission/", helperApplication.new CheckSubmissionHandler());
+//		app.get("/submit_ok", helperApplication.new SubmissionOKHandler());
+//		app.get("/submit_failed", helperApplication.new SubmissionFailedHandler());
 	}
 }

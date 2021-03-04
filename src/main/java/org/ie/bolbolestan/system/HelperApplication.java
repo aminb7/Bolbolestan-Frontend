@@ -12,7 +12,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,7 +31,20 @@ public class HelperApplication {
 	public class GetCoursesHandler implements Handler {
 		@Override
 		public void handle(@NotNull Context context) throws Exception {
-//			HelperApplication.this.courses;
+			File input = new File("target/classes/templates/courses.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+			List<Course> courses = Arrays.asList(HelperApplication.this.courses.values().toArray(new Course[0]));
+			document.body().selectFirst("table").select("tr").get(1).remove();
+			document.body().selectFirst("table").select("tr").get(1).remove();
+
+			for (Course course : courses) {
+				document.body().selectFirst("table").append("<tr>");
+				document.body().selectFirst("table").append(course.getHtmlTable());
+				document.body().selectFirst("table").append("</tr>");
+			}
+
+			context.contentType("text/html");
+			context.result(document.toString());
 		}
 	}
 	public HelperApplication() {

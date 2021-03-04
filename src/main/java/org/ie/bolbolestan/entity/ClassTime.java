@@ -47,4 +47,21 @@ public class ClassTime implements EventTime {
 		result.put("time", this.start.toString() + "-" + this.end.toString());
 		return result;
 	}
+
+	@Override
+	public String getHtmlTable() {
+		String result = "<td>";
+
+		for (int i = 0; i < this.days.length; i++) {
+			if (i > 0)
+				result += "|";
+
+			result += this.days[i];
+		}
+
+		result += "</td>";
+		result += "<td>" + this.start + "-" + this.end + "</td>";
+
+		return result;
+	}
 }

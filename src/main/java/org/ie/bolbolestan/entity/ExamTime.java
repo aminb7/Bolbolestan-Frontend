@@ -43,6 +43,14 @@ public class ExamTime implements EventTime {
 		return result;
 	}
 
+	@Override
+	public String getHtmlTable() {
+		String result = "<td>" + this.start + "</td>"
+				+ "<td>" + this.end + "</td>";
+
+		return result;
+	}
+
 	public LocalDateTime getStart() {
 		return start;
 	}
