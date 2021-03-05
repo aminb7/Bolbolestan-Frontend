@@ -31,14 +31,16 @@ public class HelperApplication {
 		public void handle(@NotNull Context context) throws Exception {
 			File input = new File("target/classes/templates/courses.html");
 			Document document = Jsoup.parse(input, "UTF-8");
-			List<Course> courses = Arrays.asList(HelperApplication.this.courses.values().toArray(new Course[0]));
+			List<Map<String, Course>> coursesGroup = new ArrayList(HelperApplication.this.courses.values());
 			document.body().selectFirst("table").select("tr").get(1).remove();
 			document.body().selectFirst("table").select("tr").get(1).remove();
 
-			for (Course course : courses) {
-				document.body().selectFirst("table").append("<tr>");
-				document.body().selectFirst("table").append(course.getHtmlTable());
-				document.body().selectFirst("table").append("</tr>");
+			for (Map<String, Course> courseGroup : coursesGroup) {
+				for (Map.Entry<String, Course> course : courseGroup.entrySet()) {
+					document.body().selectFirst("table").append("<tr>");
+					document.body().selectFirst("table").append(course.getValue().getHtmlTable());
+					document.body().selectFirst("table").append("</tr>");
+				}
 			}
 
 			context.contentType("text/html");
