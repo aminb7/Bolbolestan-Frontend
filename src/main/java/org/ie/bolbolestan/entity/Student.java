@@ -45,8 +45,8 @@ public class Student {
 		selectedCourses.put(course.getCode(), new SelectedCourse(course));
 	}
 
-	public void removeCourse(Course course) {
-		selectedCourses.remove(course.getCode());
+	public SelectedCourse removeCourse(String code) {
+		return selectedCourses.remove(code);
 	}
 
 	public Map<String, SelectedCourse> getSelectedCourses() {

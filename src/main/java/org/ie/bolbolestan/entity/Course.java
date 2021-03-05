@@ -90,6 +90,10 @@ public class Course {
 		numberOfStudents += 1;
 	}
 
+	public void decrementNumOfStudents() {
+		numberOfStudents += 1;
+	}
+
 	public String getHtmlTable() {
 		String result = "<td>" + this.code + "</td>"
 				+ "<td>" + this.classCode + "</td>"

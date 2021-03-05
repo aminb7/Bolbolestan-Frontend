@@ -120,7 +120,7 @@ public class HelperApplication {
 			if (courseGroup != null)
 				course = courseGroup.get(classCode);
 
-			Student student = HelperApplication.this.students.get(context.formParam("std_id"));
+			Student student = students.get(context.formParam("std_id"));
 
 			if (course == null || student == null) {
 				send404(context);
@@ -161,6 +161,158 @@ public class HelperApplication {
 		}
 	}
 
+	public class ChangePlanHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			File input = new File("src/main/resources/templates/change_plan.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+
+			String[] uriParts = context.req.getRequestURI().split("/");
+			String studentId = uriParts[2];
+
+			Student student = students.get(studentId);
+
+			if (student == null)
+				send404(context);
+
+			document.body().selectFirst("table").select("tr").get(1).remove();
+			document.body().selectFirst("table").select("tr").get(1).remove();
+
+			for (Map.Entry<String, SelectedCourse> selectedCourse : student.getSelectedCourses().entrySet()) {
+				document.body().selectFirst("table").child(0).append("<tr>");
+				document.body().selectFirst("table").child(0).append(
+						"<td>" + selectedCourse.getValue().getCourse().getCode() + "</td>\n"
+						+ "<td>" + selectedCourse.getValue().getCourse().getClassCode() + "</td> \n"
+						+ "<td>" + selectedCourse.getValue().getCourse().getName() + "</td>\n"
+						+ "<td>" + selectedCourse.getValue().getCourse().getUnits() + "</td>\n"
+						+ "<td>\n"
+						+ "<form action=\"\" method=\"POST\" >\n"
+						+ "<input id=\"form_course_code\" type=\"hidden\" name=\"course_code\" value=\""
+						+ selectedCourse.getValue().getCourse().getCode() + "\">\n"
+						+ "<input id=\"form_class_code\" type=\"hidden\" name=\"class_code\" value=\""
+						+ selectedCourse.getValue().getCourse().getClassCode() + "\">\n"
+						+ "<button type=\"submit\">Remove</button>\n"
+						+ "</form>\n"
+						+ "</td>");
+				document.body().selectFirst("table").child(0).append("</tr>");
+			}
+
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
+	public class RemoveCourseHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			File input = new File("src/main/resources/templates/submit_ok.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+
+			String[] uriParts = context.req.getRequestURI().split("/");
+			String studentId = uriParts[2];
+
+			Student student = students.get(studentId);
+
+			if (student == null)
+				send404(context);
+
+			String courseCode = context.formParam("course_code");
+			String classCode = context.formParam("class_code");
+			if (student.removeCourse(courseCode) != null) {
+				courses.get(courseCode).get(classCode).decrementNumOfStudents();
+				document.body().text("Course removed successfully.");
+			}
+			else
+				document.body().text("The course is not selected.");
+
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
+	public class ViewPlanHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			File input = new File("src/main/resources/templates/plan.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+
+			String[] uriParts = context.req.getRequestURI().split("/");
+			String studentId = uriParts[2];
+
+			Student student = students.get(studentId);
+
+			if (student == null)
+				send404(context);
+
+			for (Map.Entry<String, SelectedCourse> course : student.getSelectedCourses().entrySet()) {
+				ClassTime classTime = course.getValue().getCourse().getClassTime();
+				for (String day : classTime.getDays()) {
+					int classIndex;
+					switch (classTime.getStart().toString()) {
+						case "07:30" -> classIndex = 0;
+						case "09:00" -> classIndex = 1;
+						case "10:30" -> classIndex = 2;
+						case "14:00" -> classIndex = 3;
+						case "16:00" -> classIndex = 4;
+						default -> classIndex = 0;
+					}
+					document.body().selectFirst("td:contains(" + day + ")").parent().children().get(classIndex + 1).text(course.getValue().getCourse().getName());
+				}
+			}
+
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
+	public class ViewCoursesSubmissionHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			File input = new File("src/main/resources/templates/submit.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+
+			String[] uriParts = context.req.getRequestURI().split("/");
+			String studentId = uriParts[2];
+
+			Student student = students.get(studentId);
+
+			if (student == null)
+				send404(context);
+
+			document.getElementById("code").text("Student Id: " + student.getId());
+			document.getElementById("units").text("Total Units: : " + student.getSelectedUnits());
+
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
+	public class CoursesSubmissionHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			String[] uriParts = context.req.getRequestURI().split("/");
+			String studentId = uriParts[2];
+
+			Student student = students.get(studentId);
+
+			if (student == null)
+				send404(context);
+
+			File input = null;
+			int selectedUnits = student.getSelectedUnits();
+			if (selectedUnits < 12 || selectedUnits > 20)
+				input = new File("src/main/resources/templates/submit_failed.html");
+			else {
+				student.finalizeCourses();
+				input = new File("src/main/resources/templates/submit_ok.html");
+			}
+
+			Document document = Jsoup.parse(input, "UTF-8");
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
 	public HelperApplication() {
 		this.courses = new HashMap<>();
 		this.students = new HashMap<>();
@@ -177,7 +329,9 @@ public class HelperApplication {
 			this.courses.get(course.getCode()).put(course.getClassCode(), course);
 		});
 
-		Student[] studentsList = JsonParser.createObject(RawDataCollector.requestStudents(host), Student[].class);
+		String a = RawDataCollector.requestStudents(host);
+		System.out.println(a);
+		Student[] studentsList = JsonParser.createObject(a, Student[].class);
 
 		List<String> studentIds = new ArrayList<>();
 		List.of(studentsList).forEach(student -> studentIds.add(student.getId()));
