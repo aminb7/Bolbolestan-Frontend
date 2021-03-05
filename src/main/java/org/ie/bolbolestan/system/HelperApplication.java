@@ -118,7 +118,7 @@ public class HelperApplication {
 			if (!courses.containsKey(course.getCode()))
 				courses.put(course.getCode(), new HashMap<>());
 
-			this.courses.get(course.getClassCode()).put(course.getClassCode(), course);
+			this.courses.get(course.getCode()).put(course.getClassCode(), course);
 		});
 
 		Student[] studentsList = JsonParser.createObject(RawDataCollector.requestStudents(host), Student[].class);
