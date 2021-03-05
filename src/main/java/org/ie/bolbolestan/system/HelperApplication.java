@@ -136,11 +136,19 @@ public class HelperApplication {
 					hasPreconditions = false;
 			}
 
+			boolean hasConflict = false;
+
+			for (SelectedCourse selectedCourse : new ArrayList<>(student.getSelectedCourses().values())) {
+				if (selectedCourse.getCourse().getClassTime().overlaps(course.getClassTime())
+						|| selectedCourse.getCourse().getExamTime().overlaps(course.getExamTime()))
+					hasConflict = true;
+			}
+
 			String result = "";
 			document.title("Course Is Not Added");
 			context.status(400);
 
-			if (hasPreconditions) {
+			if (hasPreconditions && !hasConflict) {
 				if (!student.getSelectedCourses().containsKey(course.getCode())) {
 					student.addCourse(course);
 					context.status(200);
@@ -151,8 +159,11 @@ public class HelperApplication {
 					result = "You have already added the course.";
 				}
 			}
-			else {
+			else if (!hasPreconditions) {
 				result = "You have not passed prerequisites.";
+			}
+			else {
+				result = "The course has conflicts.";
 			}
 
 			document.body().text(result);
