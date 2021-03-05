@@ -21,9 +21,9 @@ public class WebServerApplication {
 		Javalin app = Javalin.create().start(port);
 
 		app.get("/courses", helperApplication.new GetCoursesHandler());
-//		app.get("/profile/*", helperApplication.new GetProfileHandler());
-//		app.get("/course/*/*", helperApplication.new ViewAddCourseHandler());
-//		app.get("/add_course/*/*", helperApplication.new AddCourseHandler());
+		app.get("/profile/*", helperApplication.new GetProfileHandler());
+		app.get("/course/*/*", helperApplication.new ViewAddCourseHandler());
+//		app.post("/course/*/*", helperApplication.new AddCourseHandler());
 //		app.get("/change_plan/*", helperApplication.new ChangePlanHandler());
 //		app.get("/remove_course/*", helperApplication.new RemoveCourseHandler());
 //		app.get("/plan/*", helperApplication.new ViewPlanHandler());

@@ -23,6 +23,18 @@ public class ClassTime implements EventTime {
 		this.end = LocalTime.parse(times[1], DateTimeFormatter.ofPattern("H[:m]"));
 	}
 
+	public String[] getDays() {
+		return days;
+	}
+
+	public LocalTime getStart() {
+		return start;
+	}
+
+	public LocalTime getEnd() {
+		return end;
+	}
+
 	@Override
 	public boolean overlaps(EventTime otherEventTime) {
 		if (getClass() != otherEventTime.getClass())
@@ -61,6 +73,22 @@ public class ClassTime implements EventTime {
 
 		result += "</td>";
 		result += "<td>" + this.start + "-" + this.end + "</td>";
+
+		return result;
+	}
+
+	public String getHtmlPresentationList() {
+		String result = "<li id=\"days\">Days: ";
+
+		for (int i = 0; i < this.days.length; i++) {
+			if (i > 0)
+				result += ", ";
+
+			result += this.days[i];
+		}
+
+		result += "</li>";
+		result += "<li id=\"time\">Time: " + this.start + "-" + this.end + "</li>";
 
 		return result;
 	}

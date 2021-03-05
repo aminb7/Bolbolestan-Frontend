@@ -3,18 +3,16 @@ package org.ie.bolbolestan.system;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.ie.bolbolestan.utility.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.JsonParserDelegate;
 import org.ie.bolbolestan.entity.*;
 import org.ie.bolbolestan.exception.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.ie.bolbolestan.utility.RawDataCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class HelperApplication {
-	private Map<String, Course> courses;
+	private Map<String, Map<String, Course>> courses;
 	private Map<String, Student> students;
 
 	private final ObjectMapper objectMapper;
@@ -47,6 +45,65 @@ public class HelperApplication {
 			context.result(document.toString());
 		}
 	}
+
+	public class GetProfileHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			File input = new File("target/classes/templates/profile.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+			String key = context.req.getRequestURI().split("/")[2];
+			Student student = HelperApplication.this.students.get(key);
+
+			if (student == null) {
+				send404(context);
+				return;
+			}
+
+			document.getElementById("std_id").text("Student Id: " + student.getId());
+			document.getElementById("first_name").text("First Name: " + student.getName());
+			document.getElementById("last_name").text("Last Name: " + student.getSecondName());
+			document.getElementById("birthdate").text("Birthdate: " + student.getBirthDate());
+			document.getElementById("gpa").text("GPA: " + student.getGPA());
+			document.getElementById("tpu").text("Total Passed Units: " + student.getTPU());
+
+			document.body().selectFirst("table").select("tr").get(1).remove();
+			document.body().selectFirst("table").select("tr").get(1).remove();
+			document.body().selectFirst("table").select("tr").get(1).remove();
+			document.body().selectFirst("table").append(student.getGradesHtml());
+
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
+	public class ViewAddCourseHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			File input = new File("target/classes/templates/course.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+			String[] uriParts = context.req.getRequestURI().split("/");
+			String code = uriParts[2];
+			String classCode = uriParts[3];
+			Course course = HelperApplication.this.courses.get(code).get(classCode);
+
+			if (course == null) {
+				send404(context);
+				return;
+			}
+
+			document.getElementById("code").text("Code: " + course.getCode());
+			document.getElementById("class_code").text("Class Code: " + course.getClassCode());
+			document.getElementById("units").text("units: " + course.getUnits());
+			ClassTime classTime = course.getClassTime();
+			document.getElementById("days").text("Days: " + String.join(", ", classTime.getDays()));
+			document.getElementById("time").text("Time: " + String.join("-", classTime.getStart().toString(),
+					classTime.getEnd().toString()));
+
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
 	public HelperApplication() {
 		this.courses = new HashMap<>();
 		this.students = new HashMap<>();
@@ -55,172 +112,36 @@ public class HelperApplication {
 
 	public void fillInformation() throws IOException, InterruptedException {
 		String host = "http://138.197.181.131:5000";
-		Course[] coursesList = JsonParser.createObject(RawDataCollection.requestCourses(host), Course[].class);
-		List.of(coursesList).forEach(course -> this.courses.put(course.getCode(), course));
-		Student[] studentsList = JsonParser.createObject(RawDataCollection.requestStudents(host), Student[].class);
+		Course[] coursesList = JsonParser.createObject(RawDataCollector.requestCourses(host), Course[].class);
+
+		List.of(coursesList).forEach(course -> {
+			if (!courses.containsKey(course.getCode()))
+				courses.put(course.getCode(), new HashMap<>());
+
+			this.courses.get(course.getClassCode()).put(course.getClassCode(), course);
+		});
+
+		Student[] studentsList = JsonParser.createObject(RawDataCollector.requestStudents(host), Student[].class);
 
 		List<String> studentIds = new ArrayList<>();
 		List.of(studentsList).forEach(student -> studentIds.add(student.getId()));
 
-		Map<String, String> rawGrades = RawDataCollection.requestGrades(host, studentIds);
+		Map<String, String> rawGrades = RawDataCollector.requestGrades(host, studentIds);
 		for (Student student : studentsList) {
-			student.setPassedCourses(JsonParser.createObject(rawGrades.get(student.getId()), PassedCourse[].class));
+			student.setGradedCourses(JsonParser.createObject(rawGrades.get(student.getId()), GradedCourse[].class));
+
+			for (Map.Entry<String, GradedCourse> entry : student.getGradedCourses().entrySet()) {
+				entry.getValue().setCourse(this.courses.get(entry.getKey()).entrySet().iterator().next().getValue());
+			}
 		}
 
 		List.of(studentsList).forEach(student -> this.students.put(student.getId(), student));
 	}
 
-	public ObjectNode execute(String command, String inputData) {
-		ObjectNode message = this.objectMapper.createObjectNode();
-
-		try {
-			message.put("success", true);
-			JsonNode jsonData = objectMapper.readTree(inputData);
-
-			// Call the command handler.
-			JsonNode outputData = switch (command) {
-				case "addOffering" -> this.addOffering(jsonData);
-				case "addStudent" -> this.addStudent(jsonData);
-				case "getOfferings" -> this.getOfferings(jsonData);
-				case "getOffering" -> this.getOffering(jsonData);
-				case "addToWeeklySchedule" -> this.addToWeeklySchedule(jsonData);
-				case "removeFromWeeklySchedule" -> this.removeFromWeeklySchedule(jsonData);
-				case "getWeeklySchedule" -> this.getWeeklySchedule(jsonData);
-				case "finalize" -> this.finalize(jsonData);
-				default -> throw new CommandNotFoundException();
-			};
-
-			message.set("data", outputData);
-		}
-		catch (Exception error) {
-			message.put("success", false);
-			message.put("error", error.getMessage());
-		}
-
-		return message;
-	}
-
-	protected void addCourse(Course course) throws CourseAlreadyExistsException {
-		if (courses.containsKey(course.getCode()))
-			throw new CourseAlreadyExistsException();
-
-		this.courses.put(course.getCode(), course);
-	}
-
-	protected void addStudent(Student student) throws StudentAlreadyExistsException {
-		if (students.containsKey(student.getId()))
-			throw new StudentAlreadyExistsException();
-
-		this.students.put(student.getId(), student);
-	}
-
-	protected Course getCourse(Integer code) throws OfferingNotFoundException {
-		Course course = courses.get(code);
-		if (course == null)
-			throw new OfferingNotFoundException();
-
-		return course;
-	}
-
-	protected List<Course> getCourses() {
-		return Arrays.asList(courses.values().toArray(new Course[0]));
-	}
-
-	protected Student getStudent(Integer studentId) throws StudentNotFoundException {
-		Student student = students.get(studentId);
-		if (student == null)
-			throw new StudentNotFoundException();
-
-		return student;
-	}
-
-	protected void checkStudentExists(Integer studentId) throws StudentNotFoundException {
-		if (!students.containsKey(studentId))
-			throw new StudentNotFoundException();
-	}
-
-	protected List<Student> getStudents() {
-		return Arrays.asList(students.values().toArray(new Student[0]));
-	}
-
-	protected ObjectNode addOffering(JsonNode jsonInput) throws CourseAlreadyExistsException {
-		JsonNode classTimeNode = jsonInput.with("classTime");
-		String[] days = this.objectMapper.convertValue(classTimeNode.withArray("days"), String[].class);
-		JsonNode examTimeNode = jsonInput.get("examTime");
-
-		int code = jsonInput.get("code").asInt();
-		String name = jsonInput.get("name").asText();
-		String instructor = jsonInput.get("Instructor").asText();
-		int units = jsonInput.get("units").asInt();
-		ClassTime classTime = new ClassTime(days, classTimeNode.get("time").asText());
-		ExamTime examTime = new ExamTime(LocalDateTime.parse(examTimeNode.get("start").asText(),
-				DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")),
-				LocalDateTime.parse(examTimeNode.get("end").asText(),
-						DateTimeFormatter.ofPattern("yyyy-M-d'T'HH:mm:ss")));
-
-		int capacity = jsonInput.get("capacity").asInt();
-		String[] prerequisites = this.objectMapper.convertValue(jsonInput.withArray("prerequisites"), String[].class);
-//		this.addCourse(new Course(code, name, instructor, units, classTime, examTime, capacity, prerequisites));
-		return this.objectMapper.createObjectNode();
-	}
-
-	protected ObjectNode addStudent(JsonNode jsonInput) throws StudentAlreadyExistsException {
-//		Student newStudent = new Student(jsonInput.get("studentId").asInt(), jsonInput.get("name").asText(),
-//				Year.of(jsonInput.get("enteredAt").asInt()));
-
-//		this.addStudent(newStudent);
-		return this.objectMapper.createObjectNode();
-	}
-
-	protected ArrayNode getOfferings(JsonNode jsonInput) throws Exception {
-		checkStudentExists(jsonInput.get("StudentId").asInt());
-
-		ArrayNode answerData = this.objectMapper.createArrayNode();
-		List<Course> coursesList = this.getCourses();
-		coursesList.sort(Comparator.comparing(Course::getName));
-
-		for (Course course : coursesList)
-			answerData.add(course.getJsonSummary());
-
-		return answerData;
-	}
-
-	protected ObjectNode getOffering(JsonNode jsonInput) throws Exception {
-		checkStudentExists(jsonInput.get("StudentId").asInt());
-		Course course = this.getCourse(jsonInput.get("code").asInt());
-		return course.getJsonFullInfo();
-	}
-
-	protected ObjectNode addToWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
-		Course course = this.getCourse(jsonInput.get("code").asInt());
-		student.addCourse(course);
-		return this.objectMapper.createObjectNode();
-	}
-
-	protected ObjectNode removeFromWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
-		Course course = this.getCourse(jsonInput.get("code").asInt());
-		student.removeCourse(course);
-		return this.objectMapper.createObjectNode();
-	}
-
-	protected ObjectNode getWeeklySchedule(JsonNode jsonInput) throws Exception {
-		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
-		ObjectNode answerData = this.objectMapper.createObjectNode();
-		ArrayNode weeklySchedule = this.objectMapper.createArrayNode();
-
-		Map<String, SelectedCourse> courses = student.getSelectedCourses();
-		SelectedCourse[] coursesList = courses.values().toArray(new SelectedCourse[0]);
-
-		for (SelectedCourse selectedCourse : coursesList) {
-			ObjectNode courseData = selectedCourse.getCourse().getJsonFullInfo();
-			courseData.put("status", selectedCourse.getState().toString());
-			weeklySchedule.add(courseData);
-		}
-
-		answerData.set("weeklySchedule", weeklySchedule);
-		return answerData;
+	private static void send404(Context context) throws IOException {
+		context.status(404);
+		context.contentType("text/html");
+		context.result(Jsoup.parse(new File("target/classes/templates/404.html"), "UTF-8").toString());
 	}
 
 	protected void checkFinalizing(Student student) throws MultiException {
@@ -260,12 +181,5 @@ public class HelperApplication {
 
 		if (exception.hasError())
 			throw exception;
-	}
-
-	protected ObjectNode finalize(JsonNode jsonInput) throws StudentNotFoundException, MultiException {
-		Student student = this.getStudent(jsonInput.get("StudentId").asInt());
-		checkFinalizing(student);
-		student.finalizeCourses();
-		return this.objectMapper.createObjectNode();
 	}
 }

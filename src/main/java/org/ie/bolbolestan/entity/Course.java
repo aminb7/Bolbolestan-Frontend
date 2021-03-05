@@ -40,18 +40,18 @@ public class Course {
 		this.examTime = examTime;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Course course = (Course) o;
-		return code == course.code;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(code);
-	}
+//	@Override
+//	public boolean equals(Object o) {
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//		Course course = (Course) o;
+//		return code.equals(course.code) && classCode.equals(course.classCode);
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		return Objects.hash(code, classCode);
+//	}
 
 	public String getName() {
 		return this.name;
@@ -59,6 +59,10 @@ public class Course {
 
 	public String getCode() {
 		return this.code;
+	}
+
+	public String getClassCode() {
+		return classCode;
 	}
 
 	public String getInstructor() {
@@ -125,6 +129,15 @@ public class Course {
 				+ this.examTime.getHtmlTable()
 				+ this.getPrerequisitesHtmlTable()
 				+ "<td><a href=\"/course/" + this.code + "/" + this.classCode + "\">Link</a></td>";
+		return result;
+	}
+
+	public String getHtmlPresentationList() {
+		String result = "<li id=\"code\">Code: " + this.code + "</li>"
+				+ "<li id=\"class_code\">Class Code: " + this.classCode + "</li>"
+				+ "<li id=\"units\">units: " + this.units + "</li>"
+				+ this.classTime.getHtmlPresentationList();
+
 		return result;
 	}
 

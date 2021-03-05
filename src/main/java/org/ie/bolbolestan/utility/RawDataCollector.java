@@ -1,4 +1,4 @@
-package org.ie.bolbolestan.entity;
+package org.ie.bolbolestan.utility;
 
 import org.ie.bolbolestan.utility.HttpGetter;
 
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RawDataCollection {
+public class RawDataCollector {
 
 	final static String coursesPath = "/api/courses";
 	final static String studentsPath = "/api/students";
