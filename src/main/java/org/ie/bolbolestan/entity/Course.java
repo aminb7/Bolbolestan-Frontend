@@ -2,11 +2,6 @@ package org.ie.bolbolestan.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import java.util.Objects;
 
 public class Course {
 	private final String code;
@@ -91,29 +86,6 @@ public class Course {
 		return prerequisites;
 	}
 
-	public ObjectNode getJsonSummary() {
-		ObjectNode result = new ObjectMapper().createObjectNode();
-		result.put("code", code);
-		result.put("name", name);
-		result.put("Instructor", instructor);
-		return result;
-	}
-
-	public ObjectNode getJsonFullInfo() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		ObjectNode result = objectMapper.createObjectNode();
-		result.put("code", this.code);
-		result.put("name", this.name);
-		result.put("Instructor", this.instructor);
-		result.put("units", this.units);
-		result.set("classTime", this.classTime.getJsonInfo());
-		result.set("examTime", this.examTime.getJsonInfo());
-		result.put("capacity", this.capacity);
-		ArrayNode prerequisites = objectMapper.valueToTree(this.prerequisites);
-		result.set("prerequisites", prerequisites);
-		return result;
-	}
-
 	public void incrementNumOfStudents() {
 		numberOfStudents += 1;
 	}
@@ -129,20 +101,6 @@ public class Course {
 				+ this.examTime.getHtmlTable()
 				+ "<td>" + String.join("|", this.prerequisites) + "</td>"
 				+ "<td><a href=\"/course/" + this.code + "/" + this.classCode + "\">Link</a></td>";
-		return result;
-	}
-
-	private String getPrerequisitesHtmlTable() {
-		String result = "<td>";
-
-		for (int i = 0; i < this.prerequisites.length; i++) {
-			if (i > 0)
-				result += "|";
-
-			result +=  this.prerequisites[i];
-		}
-
-		result += "</td>";
 		return result;
 	}
 }

@@ -5,10 +5,6 @@ import io.javalin.http.Handler;
 import org.ie.bolbolestan.utility.JsonParser;
 import org.ie.bolbolestan.entity.*;
 import org.ie.bolbolestan.exception.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.ie.bolbolestan.utility.RawDataCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
@@ -16,8 +12,6 @@ import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class HelperApplication {
