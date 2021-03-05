@@ -27,7 +27,7 @@ public class HelperApplication {
 	public class GetCoursesHandler implements Handler {
 		@Override
 		public void handle(@NotNull Context context) throws Exception {
-			File input = new File("target/classes/templates/courses.html");
+			File input = new File("src/main/resources/templates/courses.html");
 			Document document = Jsoup.parse(input, "UTF-8");
 			List<Map<String, Course>> coursesGroup = new ArrayList(HelperApplication.this.courses.values());
 			document.body().selectFirst("table").select("tr").get(1).remove();
@@ -49,7 +49,7 @@ public class HelperApplication {
 	public class GetProfileHandler implements Handler {
 		@Override
 		public void handle(@NotNull Context context) throws Exception {
-			File input = new File("target/classes/templates/profile.html");
+			File input = new File("src/main/resources/templates/profile.html");
 			Document document = Jsoup.parse(input, "UTF-8");
 			String key = context.req.getRequestURI().split("/")[2];
 			Student student = HelperApplication.this.students.get(key);
@@ -83,7 +83,7 @@ public class HelperApplication {
 	public class ViewAddCourseHandler implements Handler {
 		@Override
 		public void handle(@NotNull Context context) throws Exception {
-			File input = new File("target/classes/templates/course.html");
+			File input = new File("src/main/resources/templates/course.html");
 			Document document = Jsoup.parse(input, "UTF-8");
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String code = uriParts[2];
@@ -115,7 +115,7 @@ public class HelperApplication {
 	public class AddCourseHandler implements Handler {
 		@Override
 		public void handle(@NotNull Context context) throws Exception {
-			File input = new File("target/classes/templates/submit_ok.html");
+			File input = new File("src/main/resources/templates/submit_ok.html");
 			Document document = Jsoup.parse(input, "UTF-8");
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String code = uriParts[2];
@@ -203,7 +203,7 @@ public class HelperApplication {
 	private static void send404(Context context) throws IOException {
 		context.status(404);
 		context.contentType("text/html");
-		context.result(Jsoup.parse(new File("target/classes/templates/404.html"), "UTF-8").toString());
+		context.result(Jsoup.parse(new File("src/main/resources/templates/404.html"), "UTF-8").toString());
 	}
 
 	protected void checkFinalizing(Student student) throws MultiException {
