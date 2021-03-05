@@ -24,8 +24,6 @@ public class HelperApplication {
 	private Map<String, Map<String, Course>> courses;
 	private Map<String, Student> students;
 
-	private final ObjectMapper objectMapper;
-
 	public class GetCoursesHandler implements Handler {
 		@Override
 		public void handle(@NotNull Context context) throws Exception {
@@ -71,7 +69,11 @@ public class HelperApplication {
 			document.body().selectFirst("table").select("tr").get(1).remove();
 			document.body().selectFirst("table").select("tr").get(1).remove();
 			document.body().selectFirst("table").select("tr").get(1).remove();
-			document.body().selectFirst("table").append(student.getGradesHtml());
+
+			for (GradedCourse course : new ArrayList<>(student.getGradedCourses().values())) {
+				document.body().selectFirst("table")
+						.append("<tr><td>" + course.getCode() + "</td><td>" + course.getGrade() + "</td></tr>");
+			}
 
 			context.contentType("text/html");
 			context.result(document.toString());
@@ -86,7 +88,11 @@ public class HelperApplication {
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String code = uriParts[2];
 			String classCode = uriParts[3];
-			Course course = HelperApplication.this.courses.get(code).get(classCode);
+			Map<String, Course> courseGroup = HelperApplication.this.courses.get(code);
+			Course course = null;
+
+			if (courseGroup != null)
+				course = courseGroup.get(classCode);
 
 			if (course == null) {
 				send404(context);
@@ -106,10 +112,64 @@ public class HelperApplication {
 		}
 	}
 
+	public class AddCourseHandler implements Handler {
+		@Override
+		public void handle(@NotNull Context context) throws Exception {
+			File input = new File("target/classes/templates/submit_ok.html");
+			Document document = Jsoup.parse(input, "UTF-8");
+			String[] uriParts = context.req.getRequestURI().split("/");
+			String code = uriParts[2];
+			String classCode = uriParts[3];
+			Map<String, Course> courseGroup = HelperApplication.this.courses.get(code);
+			Course course = null;
+
+			if (courseGroup != null)
+				course = courseGroup.get(classCode);
+
+			Student student = HelperApplication.this.students.get(context.formParam("std_id"));
+
+			if (course == null || student == null) {
+				send404(context);
+				return;
+			}
+
+			boolean hasPreconditions = true;
+
+			for (String courseCode : course.getPrerequisites()) {
+				GradedCourse gradedCourse = student.getGradedCourses().get(courseCode);
+
+				if (gradedCourse == null || gradedCourse.getGrade() < 10)
+					hasPreconditions = false;
+			}
+
+			String result = "";
+			document.title("Course Is Not Added");
+			context.status(400);
+
+			if (hasPreconditions) {
+				if (!student.getSelectedCourses().containsKey(course.getCode())) {
+					student.addCourse(course);
+					context.status(200);
+					document.title("Course Added");
+					result = "Course added successfully.";
+				}
+				else {
+					result = "You have already added the course.";
+				}
+			}
+			else {
+				result = "You have not passed prerequisites.";
+			}
+
+			document.body().text(result);
+			context.contentType("text/html");
+			context.result(document.toString());
+		}
+	}
+
 	public HelperApplication() {
 		this.courses = new HashMap<>();
 		this.students = new HashMap<>();
-		this.objectMapper = new ObjectMapper();
 	}
 
 	public void fillInformation() throws IOException, InterruptedException {

@@ -23,7 +23,7 @@ public class WebServerApplication {
 		app.get("/courses", helperApplication.new GetCoursesHandler());
 		app.get("/profile/*", helperApplication.new GetProfileHandler());
 		app.get("/course/*/*", helperApplication.new ViewAddCourseHandler());
-//		app.post("/course/*/*", helperApplication.new AddCourseHandler());
+		app.post("/course/*/*", helperApplication.new AddCourseHandler());
 //		app.get("/change_plan/*", helperApplication.new ChangePlanHandler());
 //		app.get("/remove_course/*", helperApplication.new RemoveCourseHandler());
 //		app.get("/plan/*", helperApplication.new ViewPlanHandler());

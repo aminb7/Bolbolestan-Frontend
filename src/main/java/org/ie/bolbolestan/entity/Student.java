@@ -3,10 +3,7 @@ package org.ie.bolbolestan.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Student {
 	private final String id;
@@ -86,7 +83,7 @@ public class Student {
 	public int getTPU() {
 		int result = 0;
 
-		for (GradedCourse course : Arrays.asList(gradedCourses.values().toArray(new GradedCourse[0]))) {
+		for (GradedCourse course : new ArrayList<>(gradedCourses.values())) {
 			if (course.getGrade() >= 10)
 				result += course.getCourse().getUnits();
 		}
@@ -98,33 +95,12 @@ public class Student {
 		float result = 0;
 		int unitsSum = 0;
 
-		for (GradedCourse course : Arrays.asList(gradedCourses.values().toArray(new GradedCourse[0]))) {
+		for (GradedCourse course : new ArrayList<>(gradedCourses.values())) {
 			int units = course.getCourse().getUnits();
 			result += course.getGrade() * units;
 			unitsSum += units;
 		}
 
 		return result / unitsSum;
-	}
-
-//	public String getMetaInformationHtml() {
-//		String result = "<li id=\"std_id\">Student Id: " + this.id + "</li>"
-//				+ "<li id=\"first_name\">First Name: " + this.name + "</li>"
-//				+ "<li id=\"last_name\">Last Name: " + this.secondName + "</li>"
-//				+ "<li id=\"birthdate\">Birthdate: " + this.birthDate + "</li>"
-//				+ "<li id=\"gpa\">GPA: " + getGPA() + "</li>"
-//				+ "<li id=\"tpu\">Total Passed Units: " + getTPU() + "</li>";
-//
-//		return result;
-//	}
-
-	public String getGradesHtml() {
-		String result = "";
-
-		for (GradedCourse course : Arrays.asList(gradedCourses.values().toArray(new GradedCourse[0]))) {
-			result += "<tr><td>" + course.getCode() + "</td><td>" + course.getGrade() + "</td></tr>";
-		}
-
-		return result;
 	}
 }

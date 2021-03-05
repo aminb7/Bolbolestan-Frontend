@@ -127,17 +127,8 @@ public class Course {
 				+ "<td>" + this.type + "</td>"
 				+ this.classTime.getHtmlTable()
 				+ this.examTime.getHtmlTable()
-				+ this.getPrerequisitesHtmlTable()
+				+ "<td>" + String.join("|", this.prerequisites) + "</td>"
 				+ "<td><a href=\"/course/" + this.code + "/" + this.classCode + "\">Link</a></td>";
-		return result;
-	}
-
-	public String getHtmlPresentationList() {
-		String result = "<li id=\"code\">Code: " + this.code + "</li>"
-				+ "<li id=\"class_code\">Class Code: " + this.classCode + "</li>"
-				+ "<li id=\"units\">units: " + this.units + "</li>"
-				+ this.classTime.getHtmlPresentationList();
-
 		return result;
 	}
 

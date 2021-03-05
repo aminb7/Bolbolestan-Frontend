@@ -62,34 +62,8 @@ public class ClassTime implements EventTime {
 
 	@Override
 	public String getHtmlTable() {
-		String result = "<td>";
-
-		for (int i = 0; i < this.days.length; i++) {
-			if (i > 0)
-				result += "|";
-
-			result += this.days[i];
-		}
-
-		result += "</td>";
+		String result = "<td>" + String.join("|", this.days) + "</td>";
 		result += "<td>" + this.start + "-" + this.end + "</td>";
-
-		return result;
-	}
-
-	public String getHtmlPresentationList() {
-		String result = "<li id=\"days\">Days: ";
-
-		for (int i = 0; i < this.days.length; i++) {
-			if (i > 0)
-				result += ", ";
-
-			result += this.days[i];
-		}
-
-		result += "</li>";
-		result += "<li id=\"time\">Time: " + this.start + "-" + this.end + "</li>";
-
 		return result;
 	}
 }
