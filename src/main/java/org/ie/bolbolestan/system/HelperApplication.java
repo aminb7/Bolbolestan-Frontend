@@ -20,10 +20,17 @@ public class HelperApplication {
 
 	public class GetCoursesHandler implements Handler {
 		@Override
-		public void handle(@NotNull Context context) throws Exception {
+		public void handle(@NotNull Context context) {
 			File input = new File("src/main/resources/templates/courses.html");
-			Document document = Jsoup.parse(input, "UTF-8");
-			List<Map<String, Course>> coursesGroup = new ArrayList(HelperApplication.this.courses.values());
+			Document document = null;
+			try {
+				document = Jsoup.parse(input, "UTF-8");
+			}
+			catch (Exception e){
+				return;
+			}
+
+			List<Map<String, Course>> coursesGroup = new ArrayList(courses.values());
 			document.body().selectFirst("table").select("tr").get(1).remove();
 			document.body().selectFirst("table").select("tr").get(1).remove();
 
@@ -42,11 +49,17 @@ public class HelperApplication {
 
 	public class GetProfileHandler implements Handler {
 		@Override
-		public void handle(@NotNull Context context) throws Exception {
+		public void handle(@NotNull Context context) {
 			File input = new File("src/main/resources/templates/profile.html");
-			Document document = Jsoup.parse(input, "UTF-8");
+			Document document = null;
+			try {
+				document = Jsoup.parse(input, "UTF-8");
+			}
+			catch (Exception e) {
+				return;
+			}
 			String key = context.req.getRequestURI().split("/")[2];
-			Student student = HelperApplication.this.students.get(key);
+			Student student = students.get(key);
 
 			if (student == null) {
 				send404(context);
@@ -76,17 +89,26 @@ public class HelperApplication {
 
 	public class ViewAddCourseHandler implements Handler {
 		@Override
-		public void handle(@NotNull Context context) throws Exception {
+		public void handle(@NotNull Context context) {
 			File input = new File("src/main/resources/templates/course.html");
-			Document document = Jsoup.parse(input, "UTF-8");
+			Document document = null;
+			try {
+				document = Jsoup.parse(input, "UTF-8");
+			} catch (Exception e) {
+				return;
+			}
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String code = uriParts[2];
 			String classCode = uriParts[3];
-			Map<String, Course> courseGroup = HelperApplication.this.courses.get(code);
+			Map<String, Course> courseGroup = courses.get(code);
 			Course course = null;
 
-			if (courseGroup != null)
-				course = courseGroup.get(classCode);
+			if (courseGroup == null){
+				send404(context);
+				return;
+			}
+
+			course = courseGroup.get(classCode);
 
 			if (course == null) {
 				send404(context);
@@ -108,17 +130,27 @@ public class HelperApplication {
 
 	public class AddCourseHandler implements Handler {
 		@Override
-		public void handle(@NotNull Context context) throws Exception {
+		public void handle(@NotNull Context context) {
 			File input = new File("src/main/resources/templates/submit_ok.html");
-			Document document = Jsoup.parse(input, "UTF-8");
+			Document document;
+			try {
+				document = Jsoup.parse(input, "UTF-8");
+			}
+			catch (IOException e) {
+				return;
+			}
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String code = uriParts[2];
 			String classCode = uriParts[3];
-			Map<String, Course> courseGroup = HelperApplication.this.courses.get(code);
+			Map<String, Course> courseGroup = courses.get(code);
 			Course course = null;
 
-			if (courseGroup != null)
-				course = courseGroup.get(classCode);
+			if (courseGroup == null) {
+				send404(context);
+				return;
+			}
+
+			course = courseGroup.get(classCode);
 
 			Student student = students.get(context.formParam("std_id"));
 
@@ -348,48 +380,13 @@ public class HelperApplication {
 		List.of(studentsList).forEach(student -> this.students.put(student.getId(), student));
 	}
 
-	private static void send404(Context context) throws IOException {
+	private static void send404(Context context) {
 		context.status(404);
 		context.contentType("text/html");
-		context.result(Jsoup.parse(new File("src/main/resources/templates/404.html"), "UTF-8").toString());
-	}
-
-	protected void checkFinalizing(Student student) throws MultiException {
-		MultiException exception = new MultiException();
-
-		Map<String, SelectedCourse> studentCourses = student.getSelectedCourses();
-		List<SelectedCourse> selectedCourses = Arrays.asList(studentCourses.values().toArray(new SelectedCourse[0]));
-
-		int selectedUnits = student.getSelectedUnits();
-		if (selectedUnits < 12)
-			exception.addError(new MinimumUnitsException());
-
-		if (selectedUnits > 20)
-			exception.addError(new MaximumUnitsException());
-
-		for (int i = 0; i < selectedCourses.size(); i++) {
-			SelectedCourse selectedCourse = selectedCourses.get(i);
-//			if ((selectedCourse.getState() == CourseState.NON_FINALIZED) &&
-//					(selectedCourse.getCourse().getNumberOfStudents() >= selectedCourse.getCourse().getCapacity()))
-//				exception.addError(new CapacityException(selectedCourses.get(i).getCourse().getCode()));
-
-			// Checking Conflicts.
-			for (int j = i; j < selectedCourses.size(); j++) {
-				if (i != j) {
-					// Check Class Time Conflict.
-//					if (selectedCourse.getCourse().getClassTime().overlaps(selectedCourses.get(j).getCourse().getClassTime()))
-//						exception.addError(new ClassTimeCollisionException(selectedCourse.getCourse().getCode(),
-//								selectedCourses.get(j).getCourse().getCode()));
-//
-//					// Check Exam Time Conflict.
-//					if (selectedCourse.getCourse().getExamTime().overlaps(selectedCourses.get(j).getCourse().getExamTime()))
-//						exception.addError(new ExamTimeCollisionException(selectedCourse.getCourse().getCode(),
-//								selectedCourses.get(j).getCourse().getCode()));
-				}
-			}
+		try {
+			context.result(Jsoup.parse(new File("src/main/resources/templates/404.html"), "UTF-8").toString());
 		}
-
-		if (exception.hasError())
-			throw exception;
+		catch (IOException e){
+		}
 	}
 }
