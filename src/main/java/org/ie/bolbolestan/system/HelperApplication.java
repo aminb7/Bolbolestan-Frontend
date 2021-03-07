@@ -149,7 +149,6 @@ public class HelperApplication {
 				send404(context);
 				return;
 			}
-
 			course = courseGroup.get(classCode);
 
 			Student student = students.get(context.formParam("std_id"));
@@ -206,17 +205,24 @@ public class HelperApplication {
 
 	public class ChangePlanHandler implements Handler {
 		@Override
-		public void handle(@NotNull Context context) throws Exception {
+		public void handle(@NotNull Context context) {
 			File input = new File("src/main/resources/templates/change_plan.html");
-			Document document = Jsoup.parse(input, "UTF-8");
+			Document document = null;
+			try {
+				document = Jsoup.parse(input, "UTF-8");
+			}
+			catch (Exception e){
+			}
 
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String studentId = uriParts[2];
 
 			Student student = students.get(studentId);
 
-			if (student == null)
+			if (student == null) {
 				send404(context);
+				return;
+			}
 
 			document.body().selectFirst("table").select("tr").get(1).remove();
 			document.body().selectFirst("table").select("tr").get(1).remove();
@@ -247,20 +253,34 @@ public class HelperApplication {
 
 	public class RemoveCourseHandler implements Handler {
 		@Override
-		public void handle(@NotNull Context context) throws Exception {
+		public void handle(@NotNull Context context) {
 			File input = new File("src/main/resources/templates/submit_ok.html");
-			Document document = Jsoup.parse(input, "UTF-8");
+			Document document = null;
+			try {
+				document = Jsoup.parse(input, "UTF-8");
+			}
+			catch (Exception e) {
+				return;
+			}
 
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String studentId = uriParts[2];
 
 			Student student = students.get(studentId);
 
-			if (student == null)
+			if (student == null) {
 				send404(context);
+				return;
+			}
 
 			String courseCode = context.formParam("course_code");
 			String classCode = context.formParam("class_code");
+
+			if (courseCode == null || classCode == null) {
+				send404(context);
+				return;
+			}
+
 			if (student.removeCourse(courseCode) != null) {
 				courses.get(courseCode).get(classCode).decrementNumOfStudents();
 				document.body().text("Course removed successfully.");
@@ -284,8 +304,10 @@ public class HelperApplication {
 
 			Student student = students.get(studentId);
 
-			if (student == null)
+			if (student == null) {
 				send404(context);
+				return;
+			}
 
 			for (Map.Entry<String, SelectedCourse> course : student.getSelectedCourses().entrySet()) {
 				ClassTime classTime = course.getValue().getCourse().getClassTime();
@@ -319,8 +341,10 @@ public class HelperApplication {
 
 			Student student = students.get(studentId);
 
-			if (student == null)
+			if (student == null) {
 				send404(context);
+				return;
+			}
 
 			document.getElementById("code").text("Student Id: " + student.getId());
 			document.getElementById("units").text("Total Units: : " + student.getSelectedUnits());
@@ -332,14 +356,16 @@ public class HelperApplication {
 
 	public class CoursesSubmissionHandler implements Handler {
 		@Override
-		public void handle(@NotNull Context context) throws Exception {
+		public void handle(@NotNull Context context) {
 			String[] uriParts = context.req.getRequestURI().split("/");
 			String studentId = uriParts[2];
 
 			Student student = students.get(studentId);
 
-			if (student == null)
+			if (student == null) {
 				send404(context);
+				return;
+			}
 
 			File input = null;
 			int selectedUnits = student.getSelectedUnits();
@@ -350,7 +376,14 @@ public class HelperApplication {
 				input = new File("src/main/resources/templates/submit_ok.html");
 			}
 
-			Document document = Jsoup.parse(input, "UTF-8");
+			Document document = null;
+			try {
+				document = Jsoup.parse(input, "UTF-8");
+			}
+			catch (IOException e){
+				return;
+			}
+
 			context.contentType("text/html");
 			context.result(document.toString());
 		}
@@ -361,9 +394,15 @@ public class HelperApplication {
 		this.students = new HashMap<>();
 	}
 
-	public void fillInformation() throws IOException, InterruptedException {
+	public void fillInformation() {
 		String host = "http://138.197.181.131:5000";
-		Course[] coursesList = JsonParser.createObject(RawDataCollector.requestCourses(host), Course[].class);
+		Course[] coursesList = null;
+		try {
+			coursesList = JsonParser.createObject(RawDataCollector.requestCourses(host), Course[].class);
+		}
+		catch (Exception e) {
+
+		}
 
 		List.of(coursesList).forEach(course -> {
 			if (!courses.containsKey(course.getCode()))
@@ -372,23 +411,29 @@ public class HelperApplication {
 			this.courses.get(course.getCode()).put(course.getClassCode(), course);
 		});
 
-		String a = RawDataCollector.requestStudents(host);
-		System.out.println(a);
-		Student[] studentsList = JsonParser.createObject(a, Student[].class);
-
+		Student[] studentsList = null;
+		try {
+			studentsList = JsonParser.createObject(RawDataCollector.requestStudents(host), Student[].class);
+		}
+		catch (Exception e){
+		}
 		List<String> studentIds = new ArrayList<>();
 		List.of(studentsList).forEach(student -> studentIds.add(student.getId()));
 
-		Map<String, String> rawGrades = RawDataCollector.requestGrades(host, studentIds);
-		for (Student student : studentsList) {
-			student.setGradedCourses(JsonParser.createObject(rawGrades.get(student.getId()), GradedCourse[].class));
+		try {
+			Map<String, String> rawGrades = RawDataCollector.requestGrades(host, studentIds);
+			for (Student student : studentsList) {
+				student.setGradedCourses(JsonParser.createObject(rawGrades.get(student.getId()), GradedCourse[].class));
 
-			for (Map.Entry<String, GradedCourse> entry : student.getGradedCourses().entrySet()) {
-				entry.getValue().setCourse(this.courses.get(entry.getKey()).entrySet().iterator().next().getValue());
+				for (Map.Entry<String, GradedCourse> entry : student.getGradedCourses().entrySet()) {
+					entry.getValue().setCourse(this.courses.get(entry.getKey()).entrySet().iterator().next().getValue());
+				}
 			}
-		}
 
-		List.of(studentsList).forEach(student -> this.students.put(student.getId(), student));
+			List.of(studentsList).forEach(student -> this.students.put(student.getId(), student));
+		}
+		catch (Exception e) {
+		}
 	}
 
 	private static void send404(Context context) {

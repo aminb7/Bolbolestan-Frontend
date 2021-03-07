@@ -9,7 +9,7 @@ public class Bolbolestan {
 		this.webServerApplication = new WebServerApplication(port, new HelperApplication());
 	}
 
-	public void start() throws IOException, InterruptedException {
+	public void start() {
 		this.webServerApplication.fillInformation();
 		this.webServerApplication.serve();
 	}

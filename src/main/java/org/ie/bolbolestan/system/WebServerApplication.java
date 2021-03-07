@@ -13,7 +13,7 @@ public class WebServerApplication {
 		this.helperApplication = helperApplication;
 	}
 
-	public void fillInformation() throws IOException, InterruptedException {
+	public void fillInformation() {
 		helperApplication.fillInformation();
 	}
 
