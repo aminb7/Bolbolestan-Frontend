@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class WebServerApplication {
 	private final int port;
+	Javalin app;
 	private HelperApplication helperApplication;
 
 	public WebServerApplication(int port, HelperApplication helperApplication) {
@@ -18,7 +19,7 @@ public class WebServerApplication {
 	}
 
 	public void serve() {
-		Javalin app = Javalin.create().start(port);
+		app = Javalin.create().start(port);
 
 		app.get("/courses", helperApplication.new GetCoursesHandler());
 		app.get("/profile/*", helperApplication.new GetProfileHandler());
@@ -29,5 +30,9 @@ public class WebServerApplication {
 		app.get("/plan/*", helperApplication.new ViewPlanHandler());
 		app.get("/submit/*", helperApplication.new ViewCoursesSubmissionHandler());
 		app.post("/submit/*", helperApplication.new CoursesSubmissionHandler());
+	}
+
+	public void stop() {
+		app.stop();
 	}
 }

@@ -13,4 +13,8 @@ public class Bolbolestan {
 		this.webServerApplication.fillInformation();
 		this.webServerApplication.serve();
 	}
+
+	public void stop() {
+		this.webServerApplication.stop();
+	}
 }
