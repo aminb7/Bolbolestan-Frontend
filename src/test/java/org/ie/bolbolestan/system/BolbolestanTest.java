@@ -224,5 +224,15 @@ class BolbolestanTest {
                 HttpResponse.BodyHandlers.ofString());
 
         assertEquals(submissionResponse.statusCode(), 200);
+
+        final String successful = "Your request submited successfuly";
+        Document document = null;
+        try {
+            document = Jsoup.parse(submissionResponse.body(), "UTF-8");
+        }
+        catch (Exception e){
+            return;
+        }
+        assertEquals(successful, document.body().text());
     }
 }
