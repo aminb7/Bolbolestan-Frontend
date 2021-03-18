@@ -13,13 +13,13 @@ public class BolbolestanApplication {
 
     private Map<String, Map<String, Course>> courses;
     private Map<String, Student> students;
-    private String LoggedInStudent;
+    private String loggedInStudentId;
 
     private BolbolestanApplication()
     {
         this.courses = new HashMap<>();
         this.students = new HashMap<>();
-        this.LoggedInStudent = "";
+        this.loggedInStudentId = "";
         fillInformation();
     }
 
@@ -76,11 +76,15 @@ public class BolbolestanApplication {
         return students.containsKey(id);
     }
 
-    public String getLoggedInStudent() {
-        return LoggedInStudent;
+    public String getLoggedInStudentId() {
+        return loggedInStudentId;
     }
 
-    public void setLoggedInStudent(String loggedInStudent) {
-        LoggedInStudent = loggedInStudent;
+    public void setLoggedInStudentId(String id) {
+        this.loggedInStudentId = id;
+    }
+
+    public Student getLoggedInStudent() {
+        return students.get(loggedInStudentId);
     }
 }

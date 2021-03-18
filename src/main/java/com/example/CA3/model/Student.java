@@ -80,7 +80,7 @@ public class Student {
 		}
 	}
 
-	public int getTPU() {
+	public int getTotalPassedUnits() {
 		int result = 0;
 
 		for (GradedCourse course : new ArrayList<>(gradedCourses.values())) {
@@ -103,4 +103,6 @@ public class Student {
 
 		return result / unitsSum;
 	}
+
+
 }

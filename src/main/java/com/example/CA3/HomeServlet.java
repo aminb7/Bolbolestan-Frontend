@@ -11,7 +11,7 @@ import javax.servlet.annotation.*;
 public class HomeServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         BolbolestanApplication app = BolbolestanApplication.getInstance();
-        if (app.getLoggedInStudent().equals(""))
+        if (app.getLoggedInStudentId().equals(""))
             response.sendRedirect("/login");
         else
             request.getRequestDispatcher("/home.jsp").forward(request, response);

@@ -18,7 +18,7 @@ public class LoginServlet extends HttpServlet {
         BolbolestanApplication app = BolbolestanApplication.getInstance();
         String studentId = request.getParameter("std_id");
         if (app.studentExists(studentId)) {
-            app.setLoggedInStudent(studentId);
+            app.setLoggedInStudentId(studentId);
             response.sendRedirect("/");
         }
         else

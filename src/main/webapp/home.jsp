@@ -7,7 +7,7 @@
 </head>
 <body>
 <ul>
-    <li id="std_id">Student Id: <%= BolbolestanApplication.getInstance().getLoggedInStudent() %></li>
+    <li id="std_id">Student Id: <%= BolbolestanApplication.getInstance().getLoggedInStudentId() %></li>
     <li>
         <a href="/courses">Select Courses</a>
     </li>
