@@ -8,24 +8,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BolbolestanDatabase {
-    private static BolbolestanDatabase single_instance = null;
+public class BolbolestanApplication {
+    private static BolbolestanApplication single_instance = null;
 
     private Map<String, Map<String, Course>> courses;
     private Map<String, Student> students;
+    private String LoggedInStudent;
 
-    private BolbolestanDatabase()
+    private BolbolestanApplication()
     {
         this.courses = new HashMap<>();
         this.students = new HashMap<>();
-
+        this.LoggedInStudent = "";
         fillInformation();
     }
 
-    public static BolbolestanDatabase getInstance()
+    public static BolbolestanApplication getInstance()
     {
         if (single_instance == null)
-            single_instance = new BolbolestanDatabase();
+            single_instance = new BolbolestanApplication();
 
         return single_instance;
     }
@@ -65,9 +66,25 @@ public class BolbolestanDatabase {
                 }
             }
 
+            System.out.println("size :");
+            System.out.println(this.students.size());
             List.of(studentsList).forEach(student -> this.students.put(student.getId(), student));
+            System.out.println("size :");
+            System.out.println(this.students.size());
         }
         catch (Exception e) {
         }
+    }
+
+    public boolean studentExists(String id) {
+        return students.containsKey(id);
+    }
+
+    public String getLoggedInStudent() {
+        return LoggedInStudent;
+    }
+
+    public void setLoggedInStudent(String loggedInStudent) {
+        LoggedInStudent = loggedInStudent;
     }
 }
