@@ -66,11 +66,7 @@ public class BolbolestanApplication {
                 }
             }
 
-            System.out.println("size :");
-            System.out.println(this.students.size());
             List.of(studentsList).forEach(student -> this.students.put(student.getId(), student));
-            System.out.println("size :");
-            System.out.println(this.students.size());
         }
         catch (Exception e) {
         }

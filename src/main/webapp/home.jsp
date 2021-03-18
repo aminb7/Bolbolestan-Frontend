@@ -9,16 +9,16 @@
 <ul>
     <li id="std_id">Student Id: <%= BolbolestanApplication.getInstance().getLoggedInStudent() %></li>
     <li>
-        <a href="/courses">Select Courses</a>
+        <a href="/CA3_war_exploded/courses">Select Courses</a>
     </li>
     <li>
-        <a href="/plan">Submited plan</a>
+        <a href="/CA3_war_exploded/plan">Submited plan</a>
     </li>
     <li>
-        <a href="/profile">Profile</a>
+        <a href="/CA3_war_exploded/profile">Profile</a>
     </li>
     <li>
-        <a href="/logout">Log Out</a>
+        <a href="/CA3_war_exploded/logout">Log Out</a>
     </li>
 </ul>
 </body>
