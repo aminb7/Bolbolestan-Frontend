@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>ca3</artifactId>
+    <artifactId>CA3</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>ca3</name>
+    <name>CA3</name>
     <packaging>war</packaging>
 
     <properties>
