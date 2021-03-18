@@ -13,6 +13,6 @@ import java.io.IOException;
 public class LogoutServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         BolbolestanApplication.getInstance().setLoggedInStudent("");
-        response.sendRedirect("/CA3_war_exploded/login");
+        response.sendRedirect("/login");
     }
 }

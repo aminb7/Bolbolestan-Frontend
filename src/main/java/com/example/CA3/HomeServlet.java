@@ -12,7 +12,7 @@ public class HomeServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         BolbolestanApplication app = BolbolestanApplication.getInstance();
         if (app.getLoggedInStudent().equals(""))
-            response.sendRedirect("/CA3_war_exploded/login");
+            response.sendRedirect("/login");
         else
             request.getRequestDispatcher("/home.jsp").forward(request, response);
     }

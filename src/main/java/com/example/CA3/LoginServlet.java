@@ -19,9 +19,9 @@ public class LoginServlet extends HttpServlet {
         String studentId = request.getParameter("std_id");
         if (app.studentExists(studentId)) {
             app.setLoggedInStudent(studentId);
-            response.sendRedirect("/CA3_war_exploded");
+            response.sendRedirect("/");
         }
         else
-            response.sendRedirect("/CA3_war_exploded/login");
+            response.sendRedirect("/login");
     }
 }
