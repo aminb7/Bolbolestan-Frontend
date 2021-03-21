@@ -21,6 +21,7 @@ public class BolbolestanApplication {
         this.courses = new HashMap<>();
         this.students = new HashMap<>();
         this.loggedInStudentId = "";
+        this.searchFilter = "";
         fillInformation();
     }
 
