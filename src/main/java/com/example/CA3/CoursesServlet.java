@@ -123,11 +123,9 @@ public class CoursesServlet extends HttpServlet {
 			}
 			case "search" -> {
 				app.setSearchFilter(request.getParameter("search"));
-				response.sendRedirect("/courses");
 			}
 			case "clear" -> {
-				app.setSearchFilter(request.getParameter(""));
-				response.sendRedirect("/courses");
+				app.setSearchFilter("");
 			}
 		}
 

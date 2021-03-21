@@ -91,9 +91,7 @@
 		<th>Prerequisites</th>
 		<th></th>
 	</tr>
-	<% for (Map.Entry<String, Map<String, Course>> groupEntry : app.getCourses().entrySet()) {%>
-	<% for (Map.Entry<String, Course> entry : groupEntry.getValue().entrySet()) {%>
-	<% Course course = entry.getValue();%>
+	<% for (Course course : app.getFilteredCourses()) {%>
 	<tr>
 		<td><%= course.getCode()%></td>
 		<td><%= course.getClassCode()%></td>
@@ -116,7 +114,6 @@
 			</form>
 		</td>
 	</tr>
-	<%}%>
 	<%}%>
 </table>
 </body>
