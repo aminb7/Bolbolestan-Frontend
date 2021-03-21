@@ -35,19 +35,6 @@ public class Course {
 		this.examTime = examTime;
 	}
 
-//	@Override
-//	public boolean equals(Object o) {
-//		if (this == o) return true;
-//		if (o == null || getClass() != o.getClass()) return false;
-//		Course course = (Course) o;
-//		return code.equals(course.code) && classCode.equals(course.classCode);
-//	}
-//
-//	@Override
-//	public int hashCode() {
-//		return Objects.hash(code, classCode);
-//	}
-
 	public String getName() {
 		return this.name;
 	}
@@ -92,6 +79,10 @@ public class Course {
 
 	public void decrementNumOfStudents() {
 		numberOfStudents += 1;
+	}
+
+	public String getType() {
+		return type;
 	}
 
 	public String getHtmlTable() {

@@ -87,4 +87,8 @@ public class BolbolestanApplication {
     public Student getLoggedInStudent() {
         return students.get(loggedInStudentId);
     }
+
+    public Map<String, Map<String, Course>> getCourses() {
+        return courses;
+    }
 }
