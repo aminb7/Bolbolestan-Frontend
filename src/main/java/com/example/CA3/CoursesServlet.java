@@ -13,6 +13,12 @@ import java.util.Map;
 
 @WebServlet(name = "Courses", value = "/courses")
 public class CoursesServlet extends HttpServlet {
+	private static String message;
+
+	public static String getMessage() {
+		return message;
+	}
+
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		request.getRequestDispatcher("/courses.jsp").forward(request, response);
 	}
@@ -28,7 +34,7 @@ public class CoursesServlet extends HttpServlet {
 		switch (action) {
 			case "remove" -> {
 				String courseCode = request.getParameter("course_code");
-				app.getLoggedInStudent().getSelectedCourses().remove(courseCode);
+				app.getLoggedInStudent().removeCourse(courseCode);
 			}
 			case "add" -> {
 				String courseCode = request.getParameter("course_code");
@@ -36,6 +42,7 @@ public class CoursesServlet extends HttpServlet {
 				Map<String, Course> courseGroup = app.getCourses().get(courseCode);
 
 				if (courseGroup == null) {
+					request.getRequestDispatcher("/404.jsp").forward(request, response);
 					break;
 				}
 
@@ -43,6 +50,7 @@ public class CoursesServlet extends HttpServlet {
 				Student student = app.getLoggedInStudent();
 
 				if (course == null || student == null) {
+					request.getRequestDispatcher("/404.jsp").forward(request, response);
 					break;
 				}
 
@@ -63,8 +71,38 @@ public class CoursesServlet extends HttpServlet {
 						hasConflict = true;
 				}
 
-				if (hasPreconditions && !hasConflict)
+				if (hasPreconditions && !hasConflict) {
 					student.addCourse(course);
+				}
+				else {
+					if (!hasPreconditions)
+						message = "You have not passed preconditions.";
+					else
+						message = "Your selected courses has conflict.";
+
+					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
+				}
+			}
+			case "submit" -> {
+				Student student = app.getLoggedInStudent();
+				int selectedUnits = student.getSelectedUnits();
+				boolean hasCapacity = true;
+
+				for (Map.Entry<String, SelectedCourse> entry : student.getSelectedCourses().entrySet()) {
+					if (entry.getValue().getCourse().getCapacity() >= entry.getValue().getCourse().getNumberOfStudents())
+						hasCapacity = false;
+				}
+
+				if (selectedUnits < 12 || selectedUnits > 20) {
+					message = "Invalid sum of units.";
+					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
+				}
+				else if (!hasCapacity){
+
+				}
+				else {
+					student.finalizeCourses();
+				}
 			}
 		}
 

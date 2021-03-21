@@ -46,6 +46,11 @@ public class Student {
 	}
 
 	public SelectedCourse removeCourse(String code) {
+		SelectedCourse selectedCourse = selectedCourses.get(code);
+
+		if (selectedCourse.getState() == CourseState.FINALIZED)
+			selectedCourse.getCourse().decrementNumOfStudents();
+
 		return selectedCourses.remove(code);
 	}
 
