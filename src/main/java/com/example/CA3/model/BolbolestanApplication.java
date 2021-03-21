@@ -91,4 +91,17 @@ public class BolbolestanApplication {
     public Map<String, Map<String, Course>> getCourses() {
         return courses;
     }
+
+    public List<Course> getFilteredCourses(String filter) {
+        List<Course> courses = new ArrayList<>();
+
+        for (Map.Entry<String, Map<String, Course>> entry : this.courses.entrySet()) {
+            for (Map.Entry<String, Course> course : entry.getValue().entrySet()) {
+                if (course.getValue().getName().contains(filter))
+                    courses.add(course.getValue());
+            }
+        }
+
+        return courses;
+    }
 }
