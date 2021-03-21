@@ -71,29 +71,40 @@ public class CoursesServlet extends HttpServlet {
 						hasConflict = true;
 				}
 
-				if (hasPreconditions && !hasConflict) {
-					student.addCourse(course);
+				if (!hasPreconditions) {
+					message = "You have not passed preconditions.";
+				}
+				else if (!student.getSelectedCourses().containsKey(courseCode)) {
+					message = "You have already selected the course.";
+					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
+				}
+				else if (hasConflict) {
+					message = "Your selected courses has conflict.";
 				}
 				else {
-					if (!hasPreconditions)
-						message = "You have not passed preconditions.";
-					else
-						message = "Your selected courses has conflict.";
-
-					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
+					student.addCourse(course);
 				}
 			}
 			case "submit" -> {
 				Student student = app.getLoggedInStudent();
 				int selectedUnits = student.getSelectedUnits();
 				boolean hasCapacity = true;
+				boolean hasPassed = false;
 
 				for (Map.Entry<String, SelectedCourse> entry : student.getSelectedCourses().entrySet()) {
 					if (entry.getValue().getCourse().getCapacity() <= entry.getValue().getCourse().getNumberOfStudents())
 						hasCapacity = false;
+
+					if (!student.getGradedCourses().containsKey(entry.getKey()))
+						hasPassed = true;
 				}
 
-				if (selectedUnits < 12 || selectedUnits > 20) {
+				if (hasPassed)
+				{
+					message = "You have already passed the course.";
+					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
+				}
+				else if (selectedUnits < 12 || selectedUnits > 20) {
 					message = "Invalid sum of units.";
 					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
 				}
@@ -107,10 +118,7 @@ public class CoursesServlet extends HttpServlet {
 			}
 			case "reset" -> {
 				Student student = app.getLoggedInStudent();
-				for (Map.Entry<String, SelectedCourse> entry : student.getSelectedCourses().entrySet()) {
-					if (entry.getValue().getState() != CourseState.FINALIZED)
-						student.removeCourse(entry.getKey());
-				}
+				student.getSelectedCourses().entrySet().removeIf(entries->entries.getValue().getState() != CourseState.FINALIZED);
 			}
 		}
 
