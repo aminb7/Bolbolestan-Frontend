@@ -96,4 +96,17 @@ public class BolbolestanApplication {
     public void setSearchFilter(String searchFilter) {
         this.searchFilter = searchFilter;
     }
+
+    public List<Course> getFilteredCourses() {
+        List<Course> courses = new ArrayList<>();
+
+        for (Map.Entry<String, Map<String, Course>> entry : this.courses.entrySet()) {
+            for (Map.Entry<String, Course> course : entry.getValue().entrySet()) {
+                if (course.getValue().getName().contains(searchFilter))
+                    courses.add(course.getValue());
+            }
+        }
+
+        return courses;
+    }
 }
