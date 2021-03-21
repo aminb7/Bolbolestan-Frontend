@@ -123,11 +123,9 @@ public class CoursesServlet extends HttpServlet {
 			}
 			case "search" -> {
 				app.setSearchFilter(request.getParameter("search"));
-				request.getRequestDispatcher("/courses.jsp").forward(request, response);
 			}
 			case "clear" -> {
 				app.setSearchFilter("");
-				request.getRequestDispatcher("/courses.jsp").forward(request, response);
 			}
 		}
 
