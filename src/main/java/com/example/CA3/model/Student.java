@@ -125,7 +125,7 @@ public class Student {
 			int currentDayIndex;
 			boolean containsDay = false;
 			for (String day : classTime.getDays()) {
-				switch (classTime.getStart().toString()) {
+				switch (day) {
 					case "Saturday" -> currentDayIndex = 0;
 					case "Sunday" -> currentDayIndex = 1;
 					case "Monday" -> currentDayIndex = 2;
