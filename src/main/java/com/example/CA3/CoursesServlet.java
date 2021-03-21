@@ -74,7 +74,7 @@ public class CoursesServlet extends HttpServlet {
 				if (!hasPreconditions) {
 					message = "You have not passed preconditions.";
 				}
-				else if (!student.getSelectedCourses().containsKey(courseCode)) {
+				else if (student.getSelectedCourses().containsKey(courseCode)) {
 					message = "You have already selected the course.";
 					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
 				}
