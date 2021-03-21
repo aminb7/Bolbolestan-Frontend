@@ -95,7 +95,8 @@ public class CoursesServlet extends HttpServlet {
 					if (entry.getValue().getCourse().getCapacity() <= entry.getValue().getCourse().getNumberOfStudents())
 						hasCapacity = false;
 
-					if (!student.getGradedCourses().containsKey(entry.getKey()))
+					GradedCourse gradedCourse = student.getGradedCourses().get(entry.getKey());
+					if (gradedCourse != null && gradedCourse.getGrade() >= 10)
 						hasPassed = true;
 				}
 
