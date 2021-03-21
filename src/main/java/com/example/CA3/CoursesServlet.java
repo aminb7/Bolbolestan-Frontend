@@ -112,6 +112,14 @@ public class CoursesServlet extends HttpServlet {
 						student.removeCourse(entry.getKey());
 				}
 			}
+			case "search" -> {
+				app.setSearchFilter(request.getParameter("search"));
+				response.sendRedirect("/courses");
+			}
+			case "clear" -> {
+				app.setSearchFilter(request.getParameter(""));
+				response.sendRedirect("/courses");
+			}
 		}
 
 		response.sendRedirect("/courses");

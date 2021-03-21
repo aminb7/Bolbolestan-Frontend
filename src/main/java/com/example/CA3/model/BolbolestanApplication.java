@@ -14,6 +14,7 @@ public class BolbolestanApplication {
     private Map<String, Map<String, Course>> courses;
     private Map<String, Student> students;
     private String loggedInStudentId;
+    private String searchFilter;
 
     private BolbolestanApplication()
     {
@@ -90,5 +91,9 @@ public class BolbolestanApplication {
 
     public Map<String, Map<String, Course>> getCourses() {
         return courses;
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        this.searchFilter = searchFilter;
     }
 }
