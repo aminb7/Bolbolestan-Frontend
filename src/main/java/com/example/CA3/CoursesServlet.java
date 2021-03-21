@@ -18,6 +18,11 @@ public class CoursesServlet extends HttpServlet {
 	}
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		BolbolestanApplication app = BolbolestanApplication.getInstance();
+		if (app.getLoggedInStudentId().equals("")) {
+			response.sendRedirect("/login");
+			return;
+		}
+
 		String action = request.getParameter("action");
 
 		switch (action) {
