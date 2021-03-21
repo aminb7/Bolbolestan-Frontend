@@ -89,7 +89,7 @@ public class CoursesServlet extends HttpServlet {
 				boolean hasCapacity = true;
 
 				for (Map.Entry<String, SelectedCourse> entry : student.getSelectedCourses().entrySet()) {
-					if (entry.getValue().getCourse().getCapacity() >= entry.getValue().getCourse().getNumberOfStudents())
+					if (entry.getValue().getCourse().getCapacity() <= entry.getValue().getCourse().getNumberOfStudents())
 						hasCapacity = false;
 				}
 
@@ -98,10 +98,18 @@ public class CoursesServlet extends HttpServlet {
 					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
 				}
 				else if (!hasCapacity){
-
+					message = "Class is full.";
+					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
 				}
 				else {
 					student.finalizeCourses();
+				}
+			}
+			case "reset" -> {
+				Student student = app.getLoggedInStudent();
+				for (Map.Entry<String, SelectedCourse> entry : student.getSelectedCourses().entrySet()) {
+					if (entry.getValue().getState() != CourseState.FINALIZED)
+						student.removeCourse(entry.getKey());
 				}
 			}
 		}
