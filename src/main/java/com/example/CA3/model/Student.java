@@ -10,17 +10,30 @@ public class Student {
 	private final String name;
 	private final String secondName;
 	private final String birthDate;
+	private final String field;
+	private final String faculty;
+	private final String level;
+	private final String status;
+	private final String img;
 
 	private Map<String, SelectedCourse> selectedCourses;
 	private Map<String, GradedCourse> gradedCourses;
 
 	@JsonCreator
 	public Student(@JsonProperty("id") String id, @JsonProperty("name") String name,
-	               @JsonProperty("secondName") String secondName, @JsonProperty("birthDate") String birthDate) {
+	               @JsonProperty("secondName") String secondName, @JsonProperty("birthDate") String birthDate,
+	               @JsonProperty("field") String field, @JsonProperty("faculty") String faculty,
+	               @JsonProperty("level") String level, @JsonProperty("status") String status,
+	               @JsonProperty("img") String img) {
 		this.id = id;
 		this.name = name;
 		this.secondName = secondName;
 		this.birthDate = birthDate;
+		this.field = field;
+		this.faculty = faculty;
+		this.level = level;
+		this.status = status;
+		this.img = img;
 		selectedCourses = new HashMap<>();
 		gradedCourses = new HashMap<>();
 	}

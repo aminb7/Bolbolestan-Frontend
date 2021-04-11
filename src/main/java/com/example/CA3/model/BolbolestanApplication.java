@@ -34,7 +34,7 @@ public class BolbolestanApplication {
     }
 
     private void fillInformation() {
-        String host = "http://138.197.181.131:5000";
+        String host = "http://138.197.181.131:5100";
         Course[] coursesList = null;
         try {
             coursesList = JsonParser.createObject(RawDataCollector.requestCourses(host), Course[].class);

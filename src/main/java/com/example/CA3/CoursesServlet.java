@@ -73,6 +73,7 @@ public class CoursesServlet extends HttpServlet {
 
 				if (!hasPreconditions) {
 					message = "You have not passed preconditions.";
+					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
 				}
 				else if (student.getSelectedCourses().containsKey(courseCode)) {
 					message = "You have already selected the course.";
@@ -80,6 +81,7 @@ public class CoursesServlet extends HttpServlet {
 				}
 				else if (hasConflict) {
 					message = "Your selected courses has conflict.";
+					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
 				}
 				else {
 					student.addCourse(course);
