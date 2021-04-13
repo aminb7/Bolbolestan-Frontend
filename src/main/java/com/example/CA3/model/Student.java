@@ -92,9 +92,15 @@ public class Student {
 
 	public void finalizeCourses() {
 		for (Map.Entry<String, SelectedCourse> entry : selectedCourses.entrySet()){
-			if (entry.getValue().getState() == CourseState.NON_FINALIZED)
-				entry.getValue().getCourse().incrementNumOfStudents();
-			entry.getValue().setState(CourseState.FINALIZED);
+			if (entry.getValue().getState() == CourseState.NON_FINALIZED) {
+				if (entry.getValue().getCourse().getCapacity() <= entry.getValue().getCourse().getNumberOfStudents()) {
+					entry.getValue().getCourse().addToWaitingList(this);
+				}
+				else {
+					entry.getValue().getCourse().incrementNumOfStudents();
+					entry.getValue().setState(CourseState.FINALIZED);
+				}
+			}
 		}
 	}
 

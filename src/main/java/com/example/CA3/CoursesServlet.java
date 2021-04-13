@@ -90,13 +90,9 @@ public class CoursesServlet extends HttpServlet {
 			case "submit" -> {
 				Student student = app.getLoggedInStudent();
 				int selectedUnits = student.getSelectedUnits();
-				boolean hasCapacity = true;
 				boolean hasPassed = false;
 
 				for (Map.Entry<String, SelectedCourse> entry : student.getSelectedCourses().entrySet()) {
-					if (entry.getValue().getCourse().getCapacity() <= entry.getValue().getCourse().getNumberOfStudents())
-						hasCapacity = false;
-
 					GradedCourse gradedCourse = student.getGradedCourses().get(entry.getKey());
 					if (gradedCourse != null && gradedCourse.getGrade() >= 10)
 						hasPassed = true;
@@ -109,10 +105,6 @@ public class CoursesServlet extends HttpServlet {
 				}
 				else if (selectedUnits < 12 || selectedUnits > 20) {
 					message = "Invalid sum of units.";
-					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
-				}
-				else if (!hasCapacity){
-					message = "Class is full.";
 					request.getRequestDispatcher("/submit_failed.jsp").forward(request, response);
 				}
 				else {

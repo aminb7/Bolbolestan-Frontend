@@ -1,5 +1,6 @@
 package com.example.CA3.model;
 
+import com.example.CA3.WaitingListTimer.WaitingTimer;
 import com.example.CA3.utility.RawDataCollector;
 import com.example.CA3.utility.JsonParser;
 
@@ -109,5 +110,13 @@ public class BolbolestanApplication {
         }
 
         return courses;
+    }
+
+    public void updateWaitingLists() {
+        for (Map.Entry<String, Map<String, Course>> entry : this.courses.entrySet()) {
+            for (Map.Entry<String, Course> course : entry.getValue().entrySet()) {
+
+            }
+        }
     }
 }

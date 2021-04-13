@@ -3,6 +3,8 @@ package com.example.CA3.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+
 public class Course {
 	private final String code;
 	private final String classCode;
@@ -16,6 +18,7 @@ public class Course {
 	private final ExamTime examTime;
 
 	private int numberOfStudents;
+	private ArrayList<Student> waitingList;
 
 	@JsonCreator
 	public Course(@JsonProperty("code") String code, @JsonProperty("classCode") String classCode,
@@ -33,6 +36,8 @@ public class Course {
 		this.prerequisites = prerequisites;
 		this.classTime = classTime;
 		this.examTime = examTime;
+		this.numberOfStudents = 0;
+		this.waitingList = new ArrayList<>();
 	}
 
 	public String getName() {
@@ -85,6 +90,12 @@ public class Course {
 		return type;
 	}
 
+	public void addToWaitingList(Student student) {
+		waitingList.add(student);
+		System.out.println("waiting list size: ");
+		System.out.println(waitingList.size());
+	}
+
 	public String getHtmlTable() {
 		String result = "<td>" + this.code + "</td>"
 				+ "<td>" + this.classCode + "</td>"
@@ -97,5 +108,14 @@ public class Course {
 				+ "<td>" + String.join("|", this.prerequisites) + "</td>"
 				+ "<td><a href=\"/course/" + this.code + "/" + this.classCode + "\">Link</a></td>";
 		return result;
+	}
+
+	public void updateWaitingList() {
+		while (waitingList.size() != 0 && capacity > numberOfStudents) {
+			Student student = waitingList.get(0);
+			student.addCourse(this);
+			waitingList.remove(0);
+			incrementNumOfStudents();
+		}
 	}
 }
