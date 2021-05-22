@@ -66,14 +66,14 @@ class LoginPage extends React.Component {
     }
 
     render() {
-        let x = false;
-        fetch('loggedin_student')
-            .then(resp => resp.json())
-            .then(data => {
-                x = !!Object.keys(data).length;
-                if (x)
-                    return ReactDOM.render(<HomePage />, document.getElementById('app'));
-            });
+        // let x = false;
+        // fetch('loggedin_student')
+        //     .then(resp => resp.json())
+        //     .then(data => {
+        //         x = !!Object.keys(data).length;
+        //         if (x)
+        //             return ReactDOM.render(<HomePage />, document.getElementById('app'));
+        //     });
 
         return (
             <div>
