@@ -11,12 +11,12 @@ class ForgetPart extends React.Component {
         fetch('send_mail?email=' + this.state.email)
             .then(response => response.text())
             .then((data) => {
-                alert('درخواست شما با موفقیت ارسال شذ.');
+                alert('درخواست شما با موفقیت ارسال شد.');
             });
     }
 
     handleEmail(event) {
-        this.setState(prevState => ({password: event.target.value}));
+        this.setState(prevState => ({email: event.target.value}));
     }
 
     render() {
@@ -29,7 +29,7 @@ class ForgetPart extends React.Component {
                         <img src="../images/icons/login_avatar.png" alt="Avatar" className="login_avatar"/>
                     </div>
                     <div className="container login_container">
-                        <label for="password"><b>ایمیل</b></label>
+                        <label for="email"><b>ایمیل</b></label>
                         <input type="email" placeholder="ایمیل خود را وارد کنید." className="login_input" onChange={this.handleEmail} required/>
                         <button type="submit" className="login_button">ارسال</button>
                     </div>
