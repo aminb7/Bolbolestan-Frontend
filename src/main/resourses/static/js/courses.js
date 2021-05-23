@@ -212,7 +212,13 @@ class CoursesPage extends React.Component {
     }
 
     getState() {
-        fetch('loggedin_student')
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
+        };
+        fetch('loggedin_student', requestOptions)
             .then(resp => resp.json())
             .then(data => {
                 this.setState(prevState => ({student: data, isLoggedin: true}));
@@ -229,6 +235,9 @@ class CoursesPage extends React.Component {
         event.preventDefault();
         const requestOptions = {
             method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
         };
         fetch('remove_course?courseCode=' + classCode, requestOptions)
             .then(this.getState());
@@ -239,6 +248,9 @@ class CoursesPage extends React.Component {
         event.preventDefault();
         const requestOptions = {
             method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
         };
         fetch('reset', requestOptions)
             .then(this.getState());
@@ -247,7 +259,13 @@ class CoursesPage extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        fetch('finalize_courses')
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
+        };
+        fetch('finalize_courses', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (!data) alert('ثبت نهایی با شکست مواجه شد!');
@@ -302,7 +320,13 @@ class CoursesPage extends React.Component {
     }
 
     handleAdd(event, courseCode, classCode) {
-        fetch('add_course?courseCode=' + courseCode + '&classCode=' + classCode)
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
+        };
+        fetch('add_course?courseCode=' + courseCode + '&classCode=' + classCode, requestOptions)
             .then(resp => resp.json())
             .then(data => {
                 if (!data) alert('امکان افزودن درس وجود ندارد!');

@@ -144,7 +144,7 @@ class SignupPart extends React.Component {
                         <input type="password" placeholder="رمز خود را وارد کنید." className="login_input"
                                onChange={this.handlePassword} required/>
 
-                        <button type="button" onClick={this.sendSignup} className="login_button">ثبت نام</button>
+                        <button type="submit" className="login_button">ثبت نام</button>
                         <button type="button" onClick={this.handleLogin} className="login_button">صفحه ورود</button>
                     </div>
                 </form>

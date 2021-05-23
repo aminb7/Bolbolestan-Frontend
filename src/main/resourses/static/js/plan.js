@@ -119,7 +119,13 @@ class WeeklySchedule extends React.Component {
     }
 
     componentWillMount() {
-        fetch('loggedin_student')
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
+        };
+        fetch('loggedin_student', requestOptions)
             .then(resp => resp.json())
             .then(data => {
                 this.setState(prevState => ({selectedCourses: data.selectedCourses, isLoggedin: true}));

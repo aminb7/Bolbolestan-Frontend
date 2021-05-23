@@ -1,16 +1,19 @@
 class LoginPart extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {sid : ''};
+        this.state = {email : '', password : ''};
         this.sendLogin = this.sendLogin.bind(this);
-        this.handleSid = this.handleSid.bind(this);
+        this.handleEmail = this.handleEmail.bind(this);
+        this.handlePassword = this.handlePassword.bind(this);
         this.handleSignup = this.handleSignup.bind(this);
+        this.handleForget = this.handleForget.bind(this);
     }
 
     sendLogin(event) {
         event.preventDefault();
         var params = {
-            "studentId": this.state.sid
+            "email": this.state.email,
+            "password": this.state.password
         };
         var queryString = Object.keys(params).map(function(key) {
             return key + '=' + params[key]
@@ -19,17 +22,28 @@ class LoginPart extends React.Component {
         fetch('login?' + queryString)
             .then(response => response.json())
             .then((data) => {
-                if (data == true) ReactDOM.render(<HomePage />, document.getElementById('app'));
-                else alert('شماره دانشجویی نامعتبر است!');
+                if (Object.keys(data)[0] == "key") {
+                    localStorage.setItem("token", data["key"])
+                    ReactDOM.render(<HomePage />, document.getElementById('app'));
+                }
+                else alert('ایمیل یا رمز عبور نامعتبر است!');
             });
     }
 
-    handleSid(event) {
-        this.setState(prevState => ({sid: event.target.value}));
+    handlePassword(event) {
+        this.setState(prevState => ({password: event.target.value}));
+    }
+
+    handleEmail(event) {
+        this.setState(prevState => ({email: event.target.value}));
     }
 
     handleSignup(event) {
         ReactDOM.render(<SignupPage />, document.getElementById('app'));
+    }
+
+    handleForget(event) {
+        ReactDOM.render(<ForgetPage />, document.getElementById('app'));
     }
 
     render() {
@@ -44,15 +58,16 @@ class LoginPart extends React.Component {
 
                     <div className="container login_container">
                         <label for="email"><b>ایمیل</b></label>
-                        <input type="text" placeholder="ایمیل خود را وارد کنید." className="login_input" onChange={this.handleSid} required/>
+                        <input type="text" placeholder="ایمیل خود را وارد کنید." className="login_input" onChange={this.handleEmail} required/>
 
                         <br/>
 
                         <label for="password"><b>رمز عبور</b></label>
-                        <input type="password" placeholder="رمز خود را وارد کنید." className="login_input"/>
+                        <input type="password" placeholder="رمز خود را وارد کنید." className="login_input" onChange={this.handlePassword} required/>
                         <button type="submit" className="login_button">ورود</button>
 
                         <button type="button" onClick={this.handleSignup} className="login_button">صفحه ثبت نام</button>
+                        <button type="button" onClick={this.handleForget} className="login_button">فراموشی رمز عبور</button>
                     </div>
                 </form>
             </div>
@@ -66,14 +81,8 @@ class LoginPage extends React.Component {
     }
 
     render() {
-        // let x = false;
-        // fetch('loggedin_student')
-        //     .then(resp => resp.json())
-        //     .then(data => {
-        //         x = !!Object.keys(data).length;
-        //         if (x)
-        //             return ReactDOM.render(<HomePage />, document.getElementById('app'));
-        //     });
+        if (localStorage.getItem("token") != null)
+            return ReactDOM.render(<HomePage />, document.getElementById('app'));
 
         return (
             <div>

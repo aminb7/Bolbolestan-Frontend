@@ -7,7 +7,7 @@ class Modal extends React.Component {
 
     handleLogout(event) {
         event.preventDefault();
-        fetch('logout');
+        localStorage.removeItem("token");
         ReactDOM.render(<LoginPage />, document.getElementById('app'));
     }
 
