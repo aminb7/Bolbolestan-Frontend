@@ -19,8 +19,17 @@ class SignupPart extends React.Component {
         ReactDOM.render(<LoginPage />, document.getElementById('app'));
     }
 
+    validateEmail(email) {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    validateId(id) {
+        return !isNaN(id);
+    }
+
     inputFormatsAreCorrect() {
-        return true;
+        return this.validateEmail(this.state.email) && this.validateId(this.state.id);
     }
 
     sendSignup(event) {
@@ -41,15 +50,12 @@ class SignupPart extends React.Component {
             return key + '=' + params[key]
         }).join('&');
 
-        console.log("params: ");
-        console.log(queryString);
-
         fetch('signup?' + queryString)
             .then(response => response.json())
             .then((data) => {
                 if (data == false) alert('ایمیل و یا شماره دانشجویی تکراری است!');
                 else if (!this.inputFormatsAreCorrect()) alert('فرمت ورودی ها صحیح نیست!');
-                else ReactDOM.render(<HomePage />, document.getElementById('app'));
+                else ReactDOM.render(<LoginPage />, document.getElementById('app'));
             });
     }
 
