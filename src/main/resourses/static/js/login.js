@@ -81,7 +81,7 @@ class LoginPage extends React.Component {
     }
 
     render() {
-        if (localStorage.getItem("token") != null)
+        if (localStorage.hasOwnProperty('token'))
             return ReactDOM.render(<HomePage />, document.getElementById('app'));
 
         return (
