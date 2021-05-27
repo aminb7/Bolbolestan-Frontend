@@ -26,7 +26,7 @@ class ForgetPart extends React.Component {
 
                 <form onSubmit={this.sendEmail} className="login_form">
                     <div className="login_img_container">
-                        <img src="../images/icons/login_avatar.png" alt="Avatar" className="login_avatar"/>
+                        <img src="../assets/icons/login_avatar.png" alt="Avatar" className="login_avatar"/>
                     </div>
                     <div className="container login_container">
                         <label for="email"><b>ایمیل</b></label>

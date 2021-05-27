@@ -6076,7 +6076,7 @@ ReactDOMComponent.Mixin = {
       }
     }
 
-    // For static pages, no need to put React ID and checksum. Saves lots of
+    // For static static, no need to put React ID and checksum. Saves lots of
     // bytes.
     if (transaction.renderToStaticMarkup) {
       return ret;
@@ -6754,7 +6754,7 @@ _assign(ReactDOMEmptyComponent.prototype, {
     } else {
       if (transaction.renderToStaticMarkup) {
         // Normally we'd insert a comment node, but since this is a situation
-        // where React won't take over (static pages), we can simply return
+        // where React won't take over (static static), we can simply return
         // nothing.
         return '';
       }
@@ -7876,7 +7876,7 @@ _assign(ReactDOMTextComponent.prototype, {
       if (transaction.renderToStaticMarkup) {
         // Normally we'd wrap this between comment nodes for the reasons stated
         // above, but since this is a situation where React won't take over
-        // (static pages), we can simply return the text as it is.
+        // (static static), we can simply return the text as it is.
         return escapedText;
       }
 

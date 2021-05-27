@@ -1,6 +1,6 @@
 function BolbolestanLogo() {
     return (
-        <img className="navbar-brand header_logo" src="../images/logo.png" alt="logo"></img>
+        <img className="navbar-brand header_logo" src="../assets/logo.png" alt="logo"></img>
     );
 }
 
@@ -64,7 +64,7 @@ class LogoutSection extends React.Component {
                     </li>
                     <li className="nav-item" onClick={this.handleModal}>
                         <a className="nav-link"><img className="header_logout_icon"
-                                                     src="../images/icons/001-log-out.png" alt="log out"></img></a>
+                                                     src="../assets/icons/001-log-out.png" alt="log out"></img></a>
                     </li>
                 </ul>
             </div>

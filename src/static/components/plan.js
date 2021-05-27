@@ -3,7 +3,7 @@ function ScheduleHeader(props) {
         <tr className="table_border">
             <th colSpan="7">
                 <nav className="navbar navbar-expand-md">
-                    <img className="calendar_logo" src="../images/icons/007-calendar.png" alt="calendar"></img>
+                    <img className="calendar_logo" src="../assets/icons/007-calendar.png" alt="calendar"></img>
 
                     <div className="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
                         <div className="navbar-nav mr-auto order-0 nav-item active">
