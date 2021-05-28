@@ -1,4 +1,5 @@
 FROM node:10-alpine as builder
+
 COPY package.json package-lock.json ./
 
 RUN npm install && mkdir /react-ui && mv ./node_modules ./react-ui
@@ -11,7 +12,7 @@ RUN npm run build
 
 FROM nginx:alpine
 
-COPY ./ .nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN rm -rf /usr/share/nginx/html/*
 
