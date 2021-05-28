@@ -14,10 +14,10 @@ class NewpasswordPart extends React.Component {
         const requestOptions = {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + window.location.href.substr(29)
+                'Authorization': 'Bearer ' + this.props.token
             },
         };
-        fetch('http://localhost:8080/new_pass?password=' + this.state.password, requestOptions)
+        fetch('http://localhost:8080/forget/new_pass?password=' + this.state.password, requestOptions)
             .then(response => response.text())
             .then((data) => {
                 console.log(data);
@@ -61,7 +61,7 @@ class NewpasswordPage extends React.Component {
     render() {
         return (
             <div>
-                <NewpasswordPart />
+                <NewpasswordPart token={this.props.token} />
                 <BolbolestanFooter />
             </div>
         );
