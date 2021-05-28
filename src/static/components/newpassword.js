@@ -34,7 +34,7 @@ class NewpasswordPart extends React.Component {
 
                 <form onSubmit={this.sendPassword} className="login_form">
                     <div className="login_img_container">
-                        <img src="../images/icons/login_avatar.png" alt="Avatar" className="login_avatar"/>
+                        <img src="../assets/icons/login_avatar.png" alt="Avatar" className="login_avatar"/>
                     </div>
                     <div className="container login_container">
                         <label for="password"><b>رمز عبور</b></label>

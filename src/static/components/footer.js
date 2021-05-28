@@ -8,7 +8,7 @@ function ApplicationIcon(props) {
 
 function CopyRightIcon() {
     return (
-        <img className="copy_right_icon_size invert_image_color" src="../images/icons/006-copyright.png" alt="copy right"></img>
+        <img className="copy_right_icon_size invert_image_color" src="../assets/icons/006-copyright.png" alt="copy right"></img>
     );
 }
 
@@ -26,10 +26,10 @@ function ApplicationIcons(props) {
     return (
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ml-auto order-3">
-                <ApplicationIcon src="../images/icons/003-twitter-logo-on-black-background.png" alt="twitter"/>
-                <ApplicationIcon src="../images/icons/004-instagram.png" alt="instagram"/>
-                <ApplicationIcon src="../images/icons/002-linkedin-logo.png" alt="linkedin"/>
-                <ApplicationIcon src="../images/icons/005-facebook.png" alt="facebook"/>
+                <ApplicationIcon src="../assets/icons/003-twitter-logo-on-black-background.png" alt="twitter"/>
+                <ApplicationIcon src="../assets/icons/004-instagram.png" alt="instagram"/>
+                <ApplicationIcon src="../assets/icons/002-linkedin-logo.png" alt="linkedin"/>
+                <ApplicationIcon src="../assets/icons/005-facebook.png" alt="facebook"/>
             </ul>
         </div>
     );

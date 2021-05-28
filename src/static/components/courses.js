@@ -55,7 +55,7 @@ class SelectedCourses extends React.Component {
                                 <tbody className="gray_text">
                                 {Object.values(this.props.student.selectedCourses).map((selectedCourse) => (
                                     <tr>
-                                        <td><input type="image" src="../images/icons/012-trash-bin.png" className="trash_logo" onClick={(e) => this.removeCourse(e, selectedCourse.course.code)} alt="trash"/></td>
+                                        <td><input type="image" src="../assets/icons/012-trash-bin.png" className="trash_logo" onClick={(e) => this.removeCourse(e, selectedCourse.course.code)} alt="trash"/></td>
                                         <td><span className={(selectedCourse.courseSelectionType == 'REGISTERED') ? (selectedCourse.state == 'FINALIZED' ? "green_bordered_text" : "blue_bordered_text") : "gray_bordered_text"}>
                                             {(selectedCourse.courseSelectionType == 'REGISTERED') ? (selectedCourse.state == 'FINALIZED' ? "ثبت شده" : "ثبت نهایی نشده") : "در انتظار"}</span></td>
                                         <td>{selectedCourse.course.classCode} - {selectedCourse.course.code}</td>
@@ -70,7 +70,7 @@ class SelectedCourses extends React.Component {
                         <div className="line"></div>
                         <div className="row">
                             <p className="col-md-9 table_footer blue_text"><b>تعداد واحد ثبت شده: {this.props.student.selectedUnits}</b></p>
-                            <input type="image" src="../images/icons/009-refresh-arrow.png" onClick={this.handleReset} className=" col-md-0 reload_icon"/>
+                            <input type="image" src="../assets/icons/009-refresh-arrow.png" onClick={this.handleReset} className=" col-md-0 reload_icon"/>
                             <button type="submit" onClick={this.handleSubmit} className="col-md-2.5 final_submit blue_text">ثبت نهایی</button>
                         </div>
                     </fieldset>
@@ -161,7 +161,7 @@ class FilteredCourses extends React.Component {
                         <tbody className="gray_text">
                         {Object.values(this.props.courses).map((course, index) => (
                         <tr onMouseMove={(e) => this.handleRowInfo(e, index)}>
-                            <td><input type="image" src={course.numberOfStudents >= course.capacity ? "../images/icons/010-clock-circular-outline.png" : "../images/icons/011-add.png"} className={course.numberOfStudents >= course.capacity ? "clock_logo" : "add_logo"} onClick={(e) => this.handleAdd(e, course.code, course.classCode)} alt="add"/></td>
+                            <td><input type="image" src={course.numberOfStudents >= course.capacity ? "../assets/icons/010-clock-circular-outline.png" : "../assets/icons/011-add.png"} className={course.numberOfStudents >= course.capacity ? "clock_logo" : "add_logo"} onClick={(e) => this.handleAdd(e, course.code, course.classCode)} alt="add"/></td>
                             <td>{course.classCode} - {course.code}</td>
                             <td>{course.numberOfStudents}/{course.capacity}</td>
                             <td><span className={course.type == 'Umumi' ? "yellow_blocked_text" : course.type == 'Takhasosi' ? "blue_blocked_text" : course.type == 'Asli' ? "green_blocked_text" : "red_blocked_text"}>{course.type}</span></td>

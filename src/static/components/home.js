@@ -11,10 +11,10 @@ function CarouselImages() {
     return (
         <div className="carousel-inner">
             <div className="carousel-item active">
-                <img src="../images/cover photo.jpg" className="d-block w-100" alt="..."></img>
+                <img src="../assets/cover photo.jpg" className="d-block w-100" alt="..."></img>
             </div>
             <div className="carousel-item">
-                <img src="../images/cover photo.jpg" className="d-block w-100" alt="..."></img>
+                <img src="../assets/cover photo.jpg" className="d-block w-100" alt="..."></img>
             </div>
         </div>
     );
