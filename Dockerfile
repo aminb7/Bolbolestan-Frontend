@@ -5,7 +5,7 @@ RUN npm install && mkdir /react-ui && mv ./node_modules ./react-ui
 
 WORKDIR /react-ui
 
-COPY ..
+COPY . .
 
 RUN npm run build
 
