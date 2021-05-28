@@ -1,4 +1,6 @@
 import React from 'react';
+import '../styles/commons.css'
+import '../styles/login.css'
 import BolbolestanFooter from "./footer";
 
 class NewpasswordPart extends React.Component {

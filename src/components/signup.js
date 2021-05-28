@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import '../styles/commons.css'
+import '../styles/login.css'
 import LoginPage from "./login";
 import BolbolestanFooter from "./footer";
 

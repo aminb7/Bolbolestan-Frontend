@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import '../styles/commons.css'
+import '../styles/login.css'
 import HomePage from "./home"
 import SignupPage from "./signup";
 import ForgetPage from "./forget";
