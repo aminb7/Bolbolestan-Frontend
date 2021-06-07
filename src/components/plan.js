@@ -1,4 +1,6 @@
 import React from 'react';
+import '../styles/commons.css'
+import '../styles/plan.css'
 import BolbolestanHeader from "./header";
 import BolbolestanFooter from "./footer";
 
@@ -148,15 +150,13 @@ class WeeklySchedule extends React.Component {
                     <DaysRow />
                     {timeSlots.map((timeSlot, index) => (
                         <tr className="calendar_text">
-                            <tr className="calendar_text">
-                                <td>{timeSlot}</td>
-                                {dayNumbers.map((dayNumber) => (
-                                    <td>
-                                        <TableCell dayNum={dayNumber} timeNum={index}
-                                                   courses={this.state.selectedCourses} isLoggedin={this.state.isLoggedin}/>
-                                    </td>
-                                ))}
-                            </tr>
+                            <td>{timeSlot}</td>
+                            {dayNumbers.map((dayNumber) => (
+                                <td>
+                                    <TableCell dayNum={dayNumber} timeNum={index}
+                                               courses={this.state.selectedCourses} isLoggedin={this.state.isLoggedin}/>
+                                </td>
+                            ))}
                         </tr>
                     ))}
                 </table>
@@ -172,7 +172,7 @@ class PlanPage extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="container">
                 <BolbolestanHeader src="plan" text2="انتخاب واحد" text1="خانه" />
                 <WeeklySchedule />
                 <BolbolestanFooter />

@@ -1,4 +1,6 @@
 import React from 'react';
+import '../styles/commons.css'
+import '../styles/profile.css'
 import BolbolestanHeader from "./header";
 import BolbolestanFooter from "./footer";
 

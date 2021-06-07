@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import '../styles/commons.css'
+import '../styles/modal_profile.css'
 import CoursesPage from "./courses";
 import LoginPage from "./login";
 import HomePage from "./home";

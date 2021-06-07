@@ -4,6 +4,7 @@ import CoursesPage from "./courses";
 import HomePage from "./home";
 import PlanPage from "./plan";
 import ModalHomePage from "./modal";
+import '../styles/commons.css'
 
 function BolbolestanLogo() {
     return (
