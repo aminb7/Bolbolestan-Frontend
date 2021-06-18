@@ -5,6 +5,9 @@ docker-build:
   services:
     - docker:dind
 
+  variables:
+    IMAGE: quay.io/mrazimi99/bolbolestan-frontend:$CI_COMMIT_SHA
+
   script:
     - docker build -t $IMAGE .
-    - docker push quay.io/mrazimi99/bolbolestan-frontend
+    - docker push $IMAGE
