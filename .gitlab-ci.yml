@@ -6,7 +6,7 @@ docker-build:
     - docker:dind
 
   variables:
-    IMAGE: quay.io/mrazimi99/bolbolestan-frontend:$CI_COMMIT_SHA
+    IMAGE: quay.io/mrazimi99/bolbolestan-frontend
 
   script:
     - docker login -u="mrazimi99" -p="aDUkRaLvhHWSF+ogkABKGwyFc+GTzTqmnHmCTLo47TtFLCvVxaIT+PDjvKr2ECYh" quay.io
