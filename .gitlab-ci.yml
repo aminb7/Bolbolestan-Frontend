@@ -9,5 +9,6 @@ docker-build:
     IMAGE: quay.io/mrazimi99/bolbolestan-frontend:$CI_COMMIT_SHA
 
   script:
+    - docker login -u="mrazimi99" -p="aDUkRaLvhHWSF+ogkABKGwyFc+GTzTqmnHmCTLo47TtFLCvVxaIT+PDjvKr2ECYh" quay.io
     - docker build -t $IMAGE .
     - docker push $IMAGE
