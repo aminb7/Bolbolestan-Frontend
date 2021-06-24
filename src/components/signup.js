@@ -57,7 +57,7 @@ class SignupPart extends React.Component {
             return key + '=' + params[key]
         }).join('&');
 
-        fetch('http://localhost:8080/signup?' + queryString)
+        fetch('http://87.247.185.122:31919/signup?' + queryString)
             .then(response => response.json())
             .then((data) => {
                 if (data == false) alert('ایمیل و یا شماره دانشجویی تکراری است!');
