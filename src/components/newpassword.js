@@ -19,7 +19,7 @@ class NewpasswordPart extends React.Component {
                 'Authorization': 'Bearer ' + this.props.token
             },
         };
-        fetch('http://localhost:8080/forget/new_pass?password=' + this.state.password, requestOptions)
+        fetch('http://87.247.185.122:31919/forget/new_pass?password=' + this.state.password, requestOptions)
             .then(response => response.text())
             .then((data) => {
                 console.log(data);

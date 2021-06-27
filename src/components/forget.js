@@ -13,7 +13,7 @@ class ForgetPart extends React.Component {
 
     sendEmail(event) {
         event.preventDefault();
-        fetch('http://localhost:8080/send_mail?email=' + this.state.email)
+        fetch('http://87.247.185.122:31919/send_mail?email=' + this.state.email)
             .then(response => response.text())
             .then((data) => {
                 alert('درخواست شما با موفقیت ارسال شد.');

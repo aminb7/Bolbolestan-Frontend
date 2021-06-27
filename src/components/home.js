@@ -138,7 +138,7 @@ class ProfileSection extends React.Component {
                 'Authorization': 'Bearer ' + localStorage.getItem("token")
             },
         };
-        fetch('http://localhost:8080/loggedin_student', requestOptions)
+        fetch('http://87.247.185.122:31919/loggedin_student', requestOptions)
             .then(resp => resp.json())
             .then(data => {
                 this.setState(prevState => ({student: data, isLoggedin: true}));

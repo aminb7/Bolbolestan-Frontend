@@ -28,7 +28,7 @@ class LoginPart extends React.Component {
             return key + '=' + params[key]
         }).join('&');
 
-        fetch('http://localhost:8080/login?' + queryString)
+        fetch('http://87.247.185.122:31919/login?' + queryString)
             .then(response => response.json())
             .then((data) => {
                 if (Object.keys(data)[0] == "key") {

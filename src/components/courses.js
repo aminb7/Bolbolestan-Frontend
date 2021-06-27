@@ -224,13 +224,13 @@ class CoursesPage extends React.Component {
                 'Authorization': 'Bearer ' + localStorage.getItem("token")
             },
         };
-        fetch('http://localhost:8080/loggedin_student', requestOptions)
+        fetch('http://87.247.185.122:31919/loggedin_student', requestOptions)
             .then(resp => resp.json())
             .then(data => {
                 this.setState(prevState => ({student: data, isLoggedin: true}));
             });
 
-        fetch('http://localhost:8080/filtered_courses')
+        fetch('http://87.247.185.122:31919/filtered_courses')
             .then(resp => resp.json())
             .then(data => {
                 this.setState(prevState => ({courses: data}));
@@ -245,7 +245,7 @@ class CoursesPage extends React.Component {
                 'Authorization': 'Bearer ' + localStorage.getItem("token")
             },
         };
-        fetch('http://localhost:8080/remove_course?courseCode=' + classCode, requestOptions)
+        fetch('http://87.247.185.122:31919/remove_course?courseCode=' + classCode, requestOptions)
             .then(this.getState());
         this.getState();
     }
@@ -258,7 +258,7 @@ class CoursesPage extends React.Component {
                 'Authorization': 'Bearer ' + localStorage.getItem("token")
             },
         };
-        fetch('http://localhost:8080/reset', requestOptions)
+        fetch('http://87.247.185.122:31919/reset', requestOptions)
             .then(this.getState());
         this.getState();
     }
@@ -271,7 +271,7 @@ class CoursesPage extends React.Component {
                 'Authorization': 'Bearer ' + localStorage.getItem("token")
             },
         };
-        fetch('http://localhost:8080/finalize_courses', requestOptions)
+        fetch('http://87.247.185.122:31919/finalize_courses', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if (!data) alert('ثبت نهایی با شکست مواجه شد!');
@@ -301,7 +301,7 @@ class CoursesPage extends React.Component {
             },
             body: queryString
         };
-        fetch('http://localhost:8080/search', requestOptions)
+        fetch('http://87.247.185.122:31919/search', requestOptions)
             .then(this.getState());
     }
 
@@ -321,7 +321,7 @@ class CoursesPage extends React.Component {
             },
             body: queryString
         };
-        fetch('http://localhost:8080/typesearch', requestOptions)
+        fetch('http://87.247.185.122:31919/typesearch', requestOptions)
             .then(this.getState());
     }
 
@@ -332,7 +332,7 @@ class CoursesPage extends React.Component {
                 'Authorization': 'Bearer ' + localStorage.getItem("token")
             },
         };
-        fetch('http://localhost:8080/add_course?courseCode=' + courseCode + '&classCode=' + classCode, requestOptions)
+        fetch('http://87.247.185.122:31919/add_course?courseCode=' + courseCode + '&classCode=' + classCode, requestOptions)
             .then(resp => resp.json())
             .then(data => {
                 if (!data) alert('امکان افزودن درس وجود ندارد!');

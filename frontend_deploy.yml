@@ -1,0 +1,42 @@
+apiVersion: apps/v1             # API version
+kind: Deployment                # Type of kubernetes resource
+metadata:
+  name: frontend      # Name of the kubernetes resource
+spec:
+  replicas: 1                   # No of replicas/pods to run
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:                     
+    matchLabels:                # This deployment applies to Pods matching the specified labels
+      app: frontend
+  template:                     # Template for creating the Pods in this deployment
+    metadata:
+      labels:                   # Labels that will be applied to all the Pods in this deployment
+        app: frontend
+    spec:                       # Spec for the containers that will run inside the Pods
+      containers:
+      - name: frontend
+        image: quay.io/mrazimi99/bolbolestan-frontend
+        imagePullPolicy: Always
+        ports:
+            - containerPort: 80   # Should match the Port that the container listens on
+        resources:
+          limits:
+            cpu: 0.2
+            memory: "50Mi"
+---
+apiVersion: v1                  # API version
+kind: Service                   # Type of kubernetes resource
+metadata:
+  name: frontend      # Name of the kubernetes resource
+spec:
+  type: NodePort                # Exposes the service by opening a port on each node
+  selector:
+    app: frontend     # Any Pod matching the label `app=frontend` will be picked up by this service
+  ports:                        # Forward incoming connections on port 80 to the target port 80 in the Pod
+  - name: http
+    port: 80
+    targetPort: 80
+
